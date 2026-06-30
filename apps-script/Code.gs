@@ -158,19 +158,23 @@ function saveSubmission(sheet, data) {
       });
     });
 
+    saveDepartmentDetailsIfManager(respondent, data);
+
     return total;
   }
 
   // Legacy single-process payload: respondent + process fields all sat
   // together at the top level of `data`.
+  var legacyRespondent = {
+    department: data.department,
+    team: data.team,
+    respondentName: data.respondentName,
+    role: data.role,
+    contactPerson: data.contactPerson
+  };
+
   appendProcessRow(sheet, {
-    respondent: {
-      department: data.department,
-      team: data.team,
-      respondentName: data.respondentName,
-      role: data.role,
-      contactPerson: data.contactPerson
-    },
+    respondent: legacyRespondent,
     process: data,
     processNumber: 1,
     totalProcesses: 1,
@@ -179,6 +183,8 @@ function saveSubmission(sheet, data) {
     pageUrl: data.pageUrl,
     rawJson: data
   });
+
+  saveDepartmentDetailsIfManager(legacyRespondent, data);
 
   return 1;
 }
@@ -321,6 +327,129 @@ function appendProcessRow(sheet, opts) {
   ];
 
   sheet.appendRow(row);
+}
+
+// ============================================================
+//  Department Details ("פרטי מחלקות")
+//
+//  When respondentType === "מנהל מחלקה", the respondent also fills in
+//  department-level details (description, responsibilities, employee
+//  count, sub-teams). Those aren't per-process, so they're saved once
+//  per department in a separate sheet, keyed by "שם המחלקה" — repeat
+//  submissions from the same department's manager update that one row
+//  in place instead of piling up duplicates.
+// ============================================================
+var DEPARTMENT_SHEET_NAME = 'פרטי מחלקות';
+var DEPARTMENT_KEY_HEADER = 'שם המחלקה';
+
+var DEPARTMENT_HEADERS = [
+  'תאריך שמירה',
+  'תאריך יצירה באתר',
+  'שם המחלקה',
+  'שם הצוות / היחידה',
+  'שם ממלא הסקר',
+  'תפקיד',
+  'איש קשר להמשך בירור',
+  'תיאור המחלקה',
+  'תפקידי המחלקה המרכזיים',
+  'כמות עובדים במחלקה',
+  'צוותים / יחידות משנה במחלקה',
+  'כתובת עמוד האתר',
+  'פרטי דפדפן / משתמש',
+  'JSON מלא'
+];
+
+// Called once per submission (not once per process) when the
+// respondent identified as a department manager. Never lets a
+// department-sheet failure block the process rows that were already
+// saved into the main response sheet.
+function saveDepartmentDetailsIfManager(respondent, data) {
+  if (!respondent || respondent.respondentType !== 'מנהל מחלקה') return;
+  try {
+    saveDepartmentDetails(respondent, {
+      createdAt: data.createdAt,
+      userAgent: data.userAgent,
+      pageUrl: data.pageUrl
+    });
+  } catch (deptErr) {
+    Logger.log('saveDepartmentDetails error (process rows were still saved): ' + deptErr.toString());
+  }
+}
+
+function getOrCreateDepartmentSheet() {
+  var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  var sheet = ss.getSheetByName(DEPARTMENT_SHEET_NAME);
+  if (!sheet) sheet = ss.insertSheet(DEPARTMENT_SHEET_NAME);
+  return sheet;
+}
+
+function ensureDepartmentHeaders(sheet) {
+  if (sheet.getLastRow() === 0) {
+    writeDepartmentHeaderRow(sheet);
+    return;
+  }
+  var existing = sheet.getRange(1, 1, 1, DEPARTMENT_HEADERS.length).getValues()[0];
+  var matches = existing.length === DEPARTMENT_HEADERS.length &&
+    existing.every(function (value, i) { return value === DEPARTMENT_HEADERS[i]; });
+  if (!matches) writeDepartmentHeaderRow(sheet);
+}
+
+function writeDepartmentHeaderRow(sheet) {
+  var headerRange = sheet.getRange(1, 1, 1, DEPARTMENT_HEADERS.length);
+  headerRange.setValues([DEPARTMENT_HEADERS]);
+  headerRange.setFontWeight('bold');
+  headerRange.setBackground('#061b33');
+  headerRange.setFontColor('#ffffff');
+  sheet.setFrozenRows(1);
+  sheet.setColumnWidths(1, DEPARTMENT_HEADERS.length, 160);
+}
+
+// Inserts a new row, or updates the existing row for this department
+// (matched by "שם המחלקה") in place — so the same manager submitting
+// more processes later doesn't create duplicate department rows.
+function saveDepartmentDetails(respondent, opts) {
+  var department = (respondent.department || '').toString().trim();
+  if (!department) return; // nothing to key on — skip safely
+
+  var sheet = getOrCreateDepartmentSheet();
+  ensureDepartmentHeaders(sheet);
+
+  var row = [
+    new Date(),
+    opts.createdAt                          || '',
+    department,
+    respondent.team                         || '',
+    respondent.respondentName               || '',
+    respondent.role                         || '',
+    respondent.contactPerson                || '',
+    respondent.departmentDescription        || '',
+    respondent.departmentResponsibilities   || '',
+    respondent.departmentEmployeeCount      || '',
+    respondent.departmentSubTeams           || '',
+    opts.pageUrl                            || '',
+    opts.userAgent                          || '',
+    JSON.stringify({ respondent: respondent })
+  ];
+
+  var keyCol = DEPARTMENT_HEADERS.indexOf(DEPARTMENT_KEY_HEADER) + 1;
+  var lastRow = sheet.getLastRow();
+  var existingRow = -1;
+
+  if (lastRow > 1) {
+    var keyValues = sheet.getRange(2, keyCol, lastRow - 1, 1).getValues();
+    for (var i = 0; i < keyValues.length; i++) {
+      if ((keyValues[i][0] || '').toString().trim() === department) {
+        existingRow = i + 2; // +2: convert 0-based index to a 1-based row below the header
+        break;
+      }
+    }
+  }
+
+  if (existingRow === -1) {
+    sheet.appendRow(row);
+  } else {
+    sheet.getRange(existingRow, 1, 1, row.length).setValues([row]);
+  }
 }
 
 // ============================================================
