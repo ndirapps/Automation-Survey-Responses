@@ -7,8 +7,9 @@ const GOOGLE_SCRIPT_URL = "https://script.google.com/a/macros/nakama-software.co
 
 /* ============================================================= */
 
-const TOTAL_SECTIONS = 9;
+const TOTAL_SECTIONS = 4;
 const FIRST_PROCESS_SECTION = 2;
+const PROCESS_SECTIONS_SELECTOR = '.form-section[data-section="2"], .form-section[data-section="3"]';
 
 // Required process fields, listed in section order so the first
 // invalid one found is also the earliest section to jump back to.
@@ -38,6 +39,11 @@ const processTracker = document.getElementById('processTracker');
 const processTrackerTitle = document.getElementById('processTrackerTitle');
 const processTrackerList = document.getElementById('processTrackerList');
 const toast = document.getElementById('toast');
+const summaryDepartment = document.getElementById('summaryDepartment');
+const summaryRespondentNameRow = document.getElementById('summaryRespondentNameRow');
+const summaryRespondentName = document.getElementById('summaryRespondentName');
+const summaryProcessCount = document.getElementById('summaryProcessCount');
+const summaryCurrentProcess = document.getElementById('summaryCurrentProcess');
 
 const DEFAULT_ERROR_MESSAGE_HTML = errorBannerText.innerHTML;
 
@@ -53,6 +59,7 @@ function showSection(n) {
   updateProgress();
   updateNavButtons();
   processTracker.style.display = n === 1 ? 'none' : 'block';
+  if (n === TOTAL_SECTIONS) renderFinalSummary();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -110,29 +117,50 @@ function validateSection(sectionNum) {
   return valid;
 }
 
-/* General respondent details — currently just the department field. */
+/* General respondent details: department (text) + respondentType (radio). */
 function validateGeneralFields() {
-  const field = document.getElementById('department');
-  const errorEl = document.getElementById('department-error');
+  let valid = true;
 
-  if (!field.value.trim()) {
-    field.classList.add('invalid');
-    if (errorEl) errorEl.classList.add('visible');
-    showSection(1);
-    field.focus();
-    return false;
+  const deptField = document.getElementById('department');
+  const deptError = document.getElementById('department-error');
+  if (!deptField.value.trim()) {
+    deptField.classList.add('invalid');
+    if (deptError) deptError.classList.add('visible');
+    valid = false;
+  } else {
+    deptField.classList.remove('invalid');
+    if (deptError) deptError.classList.remove('visible');
   }
 
-  field.classList.remove('invalid');
-  if (errorEl) errorEl.classList.remove('visible');
-  return true;
+  const respondentTypeChecked = document.querySelector('input[name="respondentType"]:checked');
+  const respondentTypeError = document.getElementById('respondentType-error');
+  if (!respondentTypeChecked) {
+    if (respondentTypeError) respondentTypeError.classList.add('visible');
+    valid = false;
+  } else if (respondentTypeError) {
+    respondentTypeError.classList.remove('visible');
+  }
+
+  if (!valid) {
+    showSection(1);
+    if (!deptField.value.trim()) deptField.focus();
+  }
+
+  return valid;
 }
 
-/* Validates every required process field across all process sections
-   (not just the currently visible one), so "הוסף תהליך נוסף" / "שלח סקר"
-   catch missing required fields even if the user jumped straight to the
-   last section via the section-nav dots. Jumps to the first offending
-   section so the user can fix it. */
+/* Used for "הבא" / nav-dot forward navigation: step 1 has special-cased
+   fields (the respondentType radio group) that validateSection() can't
+   check generically, so it always goes through validateGeneralFields(). */
+function validateActiveSection() {
+  return currentSection === 1 ? validateGeneralFields() : validateSection(currentSection);
+}
+
+/* Validates every required process/summary field across both process
+   sections (not just the currently visible one), so "הוסף תהליך נוסף" /
+   "שלח סקר" catch missing required fields even if the user jumped
+   straight to the last section via the section-nav dots. Jumps to the
+   first offending section so the user can fix it. */
 function validateProcessFields() {
   let valid = true;
   let firstInvalidSection = null;
@@ -178,7 +206,7 @@ form.addEventListener('input', e => {
    Navigation events
    ============================================================ */
 btnNext.addEventListener('click', () => {
-  if (validateSection(currentSection)) showSection(currentSection + 1);
+  if (validateActiveSection()) showSection(currentSection + 1);
 });
 
 btnPrev.addEventListener('click', () => {
@@ -191,8 +219,31 @@ document.querySelectorAll('.nav-dot').forEach(dot => {
     if (target < currentSection) {
       showSection(target);
     } else if (target > currentSection) {
-      if (validateSection(currentSection)) showSection(target);
+      if (validateActiveSection()) showSection(target);
     }
+  });
+});
+
+/* ============================================================
+   Respondent type -> department-manager conditional fields
+   ============================================================ */
+const DEPARTMENT_MANAGER_FIELD_IDS = [
+  'departmentDescription', 'departmentResponsibilities', 'departmentEmployeeCount', 'departmentSubTeams'
+];
+
+document.querySelectorAll('input[name="respondentType"]').forEach(radio => {
+  radio.addEventListener('change', () => {
+    const group = document.getElementById('departmentManagerFields-group');
+    const show = radio.value === 'מנהל מחלקה' && radio.checked;
+    if (group) group.classList.toggle('visible', show);
+    if (!show) {
+      DEPARTMENT_MANAGER_FIELD_IDS.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+      });
+    }
+    const respondentTypeError = document.getElementById('respondentType-error');
+    if (respondentTypeError) respondentTypeError.classList.remove('visible');
   });
 });
 
@@ -271,15 +322,20 @@ function val(id) {
 /* General respondent details — filled once per survey session. */
 function collectRespondentData() {
   return {
-    department:     val('department'),
-    team:           val('team'),
-    respondentName: val('respondentName'),
-    role:           val('role'),
-    contactPerson:  val('contactPerson')
+    respondentType:               getRadioValue('respondentType'),
+    department:                   val('department'),
+    team:                         val('team'),
+    respondentName:               val('respondentName'),
+    role:                         val('role'),
+    contactPerson:                val('contactPerson'),
+    departmentDescription:        val('departmentDescription'),
+    departmentResponsibilities:   val('departmentResponsibilities'),
+    departmentEmployeeCount:      val('departmentEmployeeCount'),
+    departmentSubTeams:           val('departmentSubTeams')
   };
 }
 
-/* The process currently in the form fields (sections 2-9). */
+/* The process currently in the form fields (steps 2-3: פרטי התהליך + סיכום חופשי). */
 function collectProcessData() {
   return {
     processName:           val('processName'),
@@ -341,7 +397,7 @@ function isProcessEmpty(process) {
 }
 
 function clearProcessFields() {
-  document.querySelectorAll('.form-section:not([data-section="1"])').forEach(section => {
+  document.querySelectorAll(PROCESS_SECTIONS_SELECTOR).forEach(section => {
     section.querySelectorAll('input, textarea, select').forEach(field => {
       if (field.type === 'checkbox' || field.type === 'radio') {
         field.checked = false;
@@ -353,7 +409,12 @@ function clearProcessFields() {
     section.querySelectorAll('.field-error.visible').forEach(el => el.classList.remove('visible'));
   });
 
-  document.querySelectorAll('.conditional-field').forEach(el => el.classList.remove('visible'));
+  document.querySelectorAll('.conditional-field').forEach(el => {
+    // Only clear conditional fields that live inside the process/summary
+    // sections — the department-manager fields in step 1 must survive
+    // "הוסף תהליך נוסף" since respondent details are kept.
+    if (el.closest(PROCESS_SECTIONS_SELECTOR)) el.classList.remove('visible');
+  });
   document.querySelectorAll('.other-field-container').forEach(el => el.classList.remove('visible'));
 }
 
@@ -384,6 +445,27 @@ function renderProcessTracker() {
     .map((p, i) => `<li>תהליך ${i + 1}: ${escapeHtml(p.processName || '(ללא שם)')}</li>`)
     .join('');
   processTrackerList.classList.add('visible');
+}
+
+/* ============================================================
+   Final step (סיום) summary
+   ============================================================ */
+function renderFinalSummary() {
+  const department = val('department');
+  const respondentName = val('respondentName');
+  const currentProcessName = val('processName');
+
+  summaryDepartment.textContent = department || '—';
+
+  if (respondentName) {
+    summaryRespondentNameRow.style.display = 'flex';
+    summaryRespondentName.textContent = respondentName;
+  } else {
+    summaryRespondentNameRow.style.display = 'none';
+  }
+
+  summaryProcessCount.textContent = String(processesList.length);
+  summaryCurrentProcess.textContent = currentProcessName || '—';
 }
 
 /* ============================================================
@@ -516,7 +598,7 @@ btnNewSurvey.addEventListener('click', () => {
   processesList = [];
   renderProcessTracker();
 
-  // Hide all conditional fields
+  // Hide all conditional fields (department-manager section + "yes" triggers)
   document.querySelectorAll('.conditional-field').forEach(el => el.classList.remove('visible'));
 
   // Hide and clear all "other" containers
