@@ -8,21 +8,38 @@ const GOOGLE_SCRIPT_URL = "https://script.google.com/a/macros/nakama-software.co
 /* ============================================================= */
 
 const TOTAL_SECTIONS = 9;
+const FIRST_PROCESS_SECTION = 2;
+
+// Required process fields, listed in section order so the first
+// invalid one found is also the earliest section to jump back to.
+const PROCESS_REQUIRED_FIELD_IDS = ['processName', 'processGoal', 'currentSteps', 'mainPainPoint', 'mainProblem'];
+
 let currentSection = 1;
 let isSubmitting = false;
+let processesList = [];
 
 /* ---------- DOM references ---------- */
 const form = document.getElementById('surveyForm');
 const btnNext = document.getElementById('btnNext');
 const btnPrev = document.getElementById('btnPrev');
+const btnAddProcess = document.getElementById('btnAddProcess');
 const btnSubmit = document.getElementById('btnSubmit');
+const finalActions = document.getElementById('finalActions');
 const progressBarFill = document.getElementById('progressBarFill');
 const progressLabel = document.getElementById('progressLabel');
 const progressPercent = document.getElementById('progressPercent');
 const successScreen = document.getElementById('successScreen');
+const successMessage = document.getElementById('successMessage');
 const errorBanner = document.getElementById('errorBanner');
+const errorBannerText = document.getElementById('errorBannerText');
 const errorClose = document.getElementById('errorClose');
 const btnNewSurvey = document.getElementById('btnNewSurvey');
+const processTracker = document.getElementById('processTracker');
+const processTrackerTitle = document.getElementById('processTrackerTitle');
+const processTrackerList = document.getElementById('processTrackerList');
+const toast = document.getElementById('toast');
+
+const DEFAULT_ERROR_MESSAGE_HTML = errorBannerText.innerHTML;
 
 /* ============================================================
    Section navigation
@@ -35,6 +52,7 @@ function showSection(n) {
   currentSection = n;
   updateProgress();
   updateNavButtons();
+  processTracker.style.display = n === 1 ? 'none' : 'block';
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -53,9 +71,10 @@ function updateProgress() {
 }
 
 function updateNavButtons() {
+  const isLastSection = currentSection === TOTAL_SECTIONS;
   btnPrev.style.display = currentSection > 1 ? 'inline-flex' : 'none';
-  btnNext.style.display = currentSection < TOTAL_SECTIONS ? 'inline-flex' : 'none';
-  btnSubmit.style.display = currentSection === TOTAL_SECTIONS ? 'inline-flex' : 'none';
+  btnNext.style.display = isLastSection ? 'none' : 'inline-flex';
+  finalActions.style.display = isLastSection ? 'flex' : 'none';
 }
 
 /* ============================================================
@@ -85,6 +104,61 @@ function validateSection(sectionNum) {
 
   if (!valid) {
     const firstInvalid = document.querySelector(`.form-section[data-section="${sectionNum}"] .invalid`);
+    if (firstInvalid) firstInvalid.focus();
+  }
+
+  return valid;
+}
+
+/* General respondent details — currently just the department field. */
+function validateGeneralFields() {
+  const field = document.getElementById('department');
+  const errorEl = document.getElementById('department-error');
+
+  if (!field.value.trim()) {
+    field.classList.add('invalid');
+    if (errorEl) errorEl.classList.add('visible');
+    showSection(1);
+    field.focus();
+    return false;
+  }
+
+  field.classList.remove('invalid');
+  if (errorEl) errorEl.classList.remove('visible');
+  return true;
+}
+
+/* Validates every required process field across all process sections
+   (not just the currently visible one), so "הוסף תהליך נוסף" / "שלח סקר"
+   catch missing required fields even if the user jumped straight to the
+   last section via the section-nav dots. Jumps to the first offending
+   section so the user can fix it. */
+function validateProcessFields() {
+  let valid = true;
+  let firstInvalidSection = null;
+
+  PROCESS_REQUIRED_FIELD_IDS.forEach(id => {
+    const field = document.getElementById(id);
+    if (!field) return;
+    const errorEl = document.getElementById(id + '-error');
+
+    if (!field.value.trim()) {
+      field.classList.add('invalid');
+      if (errorEl) errorEl.classList.add('visible');
+      valid = false;
+      if (firstInvalidSection === null) {
+        const section = field.closest('.form-section');
+        if (section) firstInvalidSection = parseInt(section.dataset.section);
+      }
+    } else {
+      field.classList.remove('invalid');
+      if (errorEl) errorEl.classList.remove('visible');
+    }
+  });
+
+  if (!valid && firstInvalidSection !== null) {
+    showSection(firstInvalidSection);
+    const firstInvalid = document.querySelector('.invalid');
     if (firstInvalid) firstInvalid.focus();
   }
 
@@ -194,81 +268,147 @@ function val(id) {
   return el.value.trim();
 }
 
-function collectFormData() {
+/* General respondent details — filled once per survey session. */
+function collectRespondentData() {
   return {
-    // Section 1
-    department:           val('department'),
-    team:                 val('team'),
-    respondentName:       val('respondentName'),
-    role:                 val('role'),
-    contactPerson:        val('contactPerson'),
-
-    // Section 2
-    processName:          val('processName'),
-    processGoal:          val('processGoal'),
-    currentOwner:         val('currentOwner'),
-    otherInvolved:        val('otherInvolved'),
-
-    // Section 3
-    processStart:         val('processStart'),
-    processStartOther:    val('processStartOther'),
-    currentSteps:         val('currentSteps'),
-    systemsUsed:          getCheckedValues('systemsUsed').filter(v => v !== 'אחר').join(', '),
-    systemsUsedOther:     val('systemsUsedOther'),
-    manualCopy:           getRadioValue('manualCopy'),
-    manualCopyDetails:    val('manualCopyDetails'),
-
-    // Section 4
-    hasFiles:             getRadioValue('hasFiles'),
-    fileTypes:            getCheckedValues('fileTypes').filter(v => v !== 'אחר').join(', '),
-    fileTypesOther:       val('fileTypesOther'),
-    storageLocations:     getCheckedValues('storageLocations').filter(v => v !== 'אחר').join(', '),
-    storageLocationsOther:val('storageLocationsOther'),
-    hardToFind:           getRadioValue('hardToFind'),
-
-    // Section 5
-    mainPainPoint:        val('mainPainPoint'),
-    timeTaking:           val('timeTaking'),
-    errorProne:           val('errorProne'),
-    hardToTrack:          getRadioValue('hardToTrack'),
-    duplicateEntry:       getRadioValue('duplicateEntry'),
-    frequency:            document.getElementById('frequency').value,
-    frequencyOther:       val('frequencyOther'),
-    avgTime:              val('avgTime'),
-
-    // Section 6
-    automationNeeds:      getCheckedValues('automationNeeds').filter(v => v !== 'אחר').join(', '),
-    automationNeedsOther: val('automationNeedsOther'),
-    needsForm:            getRadioValue('needsForm'),
-    needsDashboard:       getRadioValue('needsDashboard'),
-    needsAlerts:          getRadioValue('needsAlerts'),
-    reportNeeded:         val('reportNeeded'),
-
-    // Section 7
-    hasApprovals:         getRadioValue('hasApprovals'),
-    approvalDetails:      val('approvalDetails'),
-    differentPermissions: getRadioValue('differentPermissions'),
-    sensitiveInfo:        getRadioValue('sensitiveInfo'),
-
-    // Section 8
-    ratingManual:         getRadioValue('ratingManual'),
-    ratingTime:           getRadioValue('ratingTime'),
-    ratingErrors:         getRadioValue('ratingErrors'),
-    ratingUrgency:        getRadioValue('ratingUrgency'),
-    ratingPeople:         getRadioValue('ratingPeople'),
-
-    // Section 9
-    mainProblem:          val('mainProblem'),
-    desiredFuture:        val('desiredFuture'),
-    successDefinition:    val('successDefinition'),
-    additionalNotes:      val('additionalNotes'),
-
-    // Metadata
-    createdAt:  new Date().toISOString(),
-    userAgent:  navigator.userAgent,
-    pageUrl:    window.location.href
+    department:     val('department'),
+    team:           val('team'),
+    respondentName: val('respondentName'),
+    role:           val('role'),
+    contactPerson:  val('contactPerson')
   };
 }
+
+/* The process currently in the form fields (sections 2-9). */
+function collectProcessData() {
+  return {
+    processName:           val('processName'),
+    processGoal:           val('processGoal'),
+    currentOwner:          val('currentOwner'),
+    otherInvolved:         val('otherInvolved'),
+
+    processStart:          val('processStart'),
+    processStartOther:     val('processStartOther'),
+    currentSteps:          val('currentSteps'),
+    systemsUsed:           getCheckedValues('systemsUsed').filter(v => v !== 'אחר').join(', '),
+    systemsUsedOther:      val('systemsUsedOther'),
+    manualCopy:            getRadioValue('manualCopy'),
+    manualCopyDetails:     val('manualCopyDetails'),
+
+    hasFiles:              getRadioValue('hasFiles'),
+    fileTypes:             getCheckedValues('fileTypes').filter(v => v !== 'אחר').join(', '),
+    fileTypesOther:        val('fileTypesOther'),
+    storageLocations:      getCheckedValues('storageLocations').filter(v => v !== 'אחר').join(', '),
+    storageLocationsOther: val('storageLocationsOther'),
+    hardToFind:            getRadioValue('hardToFind'),
+
+    mainPainPoint:         val('mainPainPoint'),
+    timeTaking:            val('timeTaking'),
+    errorProne:            val('errorProne'),
+    hardToTrack:           getRadioValue('hardToTrack'),
+    duplicateEntry:        getRadioValue('duplicateEntry'),
+    frequency:             document.getElementById('frequency').value,
+    frequencyOther:        val('frequencyOther'),
+    avgTime:               val('avgTime'),
+
+    automationNeeds:       getCheckedValues('automationNeeds').filter(v => v !== 'אחר').join(', '),
+    automationNeedsOther:  val('automationNeedsOther'),
+    needsForm:             getRadioValue('needsForm'),
+    needsDashboard:        getRadioValue('needsDashboard'),
+    needsAlerts:           getRadioValue('needsAlerts'),
+    reportNeeded:          val('reportNeeded'),
+
+    hasApprovals:          getRadioValue('hasApprovals'),
+    approvalDetails:       val('approvalDetails'),
+    differentPermissions:  getRadioValue('differentPermissions'),
+    sensitiveInfo:         getRadioValue('sensitiveInfo'),
+
+    ratingManual:          getRadioValue('ratingManual'),
+    ratingTime:            getRadioValue('ratingTime'),
+    ratingErrors:          getRadioValue('ratingErrors'),
+    ratingUrgency:         getRadioValue('ratingUrgency'),
+    ratingPeople:          getRadioValue('ratingPeople'),
+
+    mainProblem:           val('mainProblem'),
+    desiredFuture:         val('desiredFuture'),
+    successDefinition:     val('successDefinition'),
+    additionalNotes:       val('additionalNotes')
+  };
+}
+
+function isProcessEmpty(process) {
+  return Object.values(process).every(v => !v || (typeof v === 'string' && v.trim() === ''));
+}
+
+function clearProcessFields() {
+  document.querySelectorAll('.form-section:not([data-section="1"])').forEach(section => {
+    section.querySelectorAll('input, textarea, select').forEach(field => {
+      if (field.type === 'checkbox' || field.type === 'radio') {
+        field.checked = false;
+      } else {
+        field.value = '';
+      }
+      field.classList.remove('invalid');
+    });
+    section.querySelectorAll('.field-error.visible').forEach(el => el.classList.remove('visible'));
+  });
+
+  document.querySelectorAll('.conditional-field').forEach(el => el.classList.remove('visible'));
+  document.querySelectorAll('.other-field-container').forEach(el => el.classList.remove('visible'));
+}
+
+/* ============================================================
+   Process tracker (list of processes already added in this session)
+   ============================================================ */
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function renderProcessTracker() {
+  const count = processesList.length;
+
+  if (count === 0) {
+    processTrackerTitle.textContent = 'עדיין לא נוספו תהליכים נוספים.';
+    processTrackerList.innerHTML = '';
+    processTrackerList.classList.remove('visible');
+    return;
+  }
+
+  processTrackerTitle.textContent = count === 1
+    ? 'נוסף תהליך אחד לסקר'
+    : `נוספו ${count} תהליכים לסקר`;
+
+  processTrackerList.innerHTML = processesList
+    .map((p, i) => `<li>תהליך ${i + 1}: ${escapeHtml(p.processName || '(ללא שם)')}</li>`)
+    .join('');
+  processTrackerList.classList.add('visible');
+}
+
+/* ============================================================
+   Toast
+   ============================================================ */
+let toastTimer = null;
+function showToast(message) {
+  toast.textContent = message;
+  toast.classList.add('visible');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('visible'), 3200);
+}
+
+/* ============================================================
+   Add another process
+   ============================================================ */
+btnAddProcess.addEventListener('click', () => {
+  if (!validateProcessFields()) return;
+
+  processesList.push(collectProcessData());
+  clearProcessFields();
+  renderProcessTracker();
+  showToast('התהליך נוסף. ניתן למלא תהליך נוסף.');
+  showSection(FIRST_PROCESS_SECTION);
+});
 
 /* ============================================================
    Form submission
@@ -281,12 +421,25 @@ function setSubmitLoading(loading) {
   btnSpinner.style.display = loading ? 'inline-flex' : 'none';
 }
 
-function showError() { errorBanner.style.display = 'flex'; }
+function showError(messageHtml) {
+  errorBannerText.innerHTML = messageHtml || DEFAULT_ERROR_MESSAGE_HTML;
+  errorBanner.style.display = 'flex';
+}
 function hideError() { errorBanner.style.display = 'none'; }
 
 errorClose.addEventListener('click', hideError);
 
-async function submitSurvey(data) {
+function buildSubmissionPayload(processes) {
+  return {
+    respondent: collectRespondentData(),
+    processes: processes,
+    createdAt: new Date().toISOString(),
+    userAgent: navigator.userAgent,
+    pageUrl: window.location.href
+  };
+}
+
+async function submitSurvey(payload) {
   /*
     Google Apps Script Web Apps have CORS restrictions.
     Using fetch with mode: "no-cors" (opaque response) avoids the preflight block.
@@ -294,7 +447,7 @@ async function submitSurvey(data) {
     request as success.
   */
   const params = new URLSearchParams();
-  params.append('payload', JSON.stringify(data));
+  params.append('payload', JSON.stringify(payload));
 
   await fetch(GOOGLE_SCRIPT_URL, {
     method: 'POST',
@@ -304,22 +457,45 @@ async function submitSurvey(data) {
   });
 }
 
+function processCountLabel(count) {
+  return count === 1 ? 'נשמר תהליך אחד.' : `נשמרו ${count} תהליכים.`;
+}
+
 form.addEventListener('submit', async e => {
   e.preventDefault();
   if (isSubmitting) return;
-  if (!validateSection(TOTAL_SECTIONS)) return;
+
+  hideError();
+
+  if (!validateGeneralFields()) return;
+
+  const currentProcess = collectProcessData();
+  const currentIsEmpty = isProcessEmpty(currentProcess);
+  const processesToSubmit = processesList.slice();
+
+  if (!currentIsEmpty) {
+    if (!validateProcessFields()) return;
+    processesToSubmit.push(currentProcess);
+  }
+
+  if (processesToSubmit.length === 0) {
+    showError('יש למלא לפחות תהליך אחד לפני שליחת הסקר.');
+    showSection(FIRST_PROCESS_SECTION);
+    return;
+  }
 
   isSubmitting = true;
-  hideError();
   setSubmitLoading(true);
 
   try {
-    const data = collectFormData();
-    console.table(data);
-    await submitSurvey(data);
+    const payload = buildSubmissionPayload(processesToSubmit);
+    console.table(processesToSubmit);
+    await submitSurvey(payload);
 
     form.style.display = 'none';
     document.querySelector('.form-nav-buttons').style.display = 'none';
+    processTracker.style.display = 'none';
+    successMessage.textContent = `הסקר נשלח בהצלחה. ${processCountLabel(processesToSubmit.length)}`;
     successScreen.style.display = 'block';
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
@@ -333,10 +509,12 @@ form.addEventListener('submit', async e => {
 });
 
 /* ============================================================
-   Reset for new survey
+   Reset for a completely new survey (after success)
    ============================================================ */
 btnNewSurvey.addEventListener('click', () => {
   form.reset();
+  processesList = [];
+  renderProcessTracker();
 
   // Hide all conditional fields
   document.querySelectorAll('.conditional-field').forEach(el => el.classList.remove('visible'));
@@ -367,4 +545,5 @@ btnNewSurvey.addEventListener('click', () => {
    Init
    ============================================================ */
 initOtherFields();
+renderProcessTracker();
 showSection(1);

@@ -580,16 +580,25 @@
           </div>
         </section>
 
+        <!-- Process Tracker -->
+        <div class="process-tracker" id="processTracker">
+          <p class="process-tracker__title" id="processTrackerTitle">עדיין לא נוספו תהליכים נוספים.</p>
+          <ol class="process-tracker__list" id="processTrackerList"></ol>
+        </div>
+
         <!-- Navigation Buttons -->
         <div class="form-nav-buttons">
           <button type="button" class="btn btn-secondary" id="btnPrev" style="display:none">הקודם</button>
           <button type="button" class="btn btn-primary" id="btnNext">הבא</button>
-          <button type="submit" class="btn btn-submit" id="btnSubmit" style="display:none">
-            <span class="btn-text">שליחת הסקר</span>
-            <span class="btn-loading" style="display:none">
-              <span class="spinner"></span> שולח...
-            </span>
-          </button>
+          <div class="form-nav-buttons__group" id="finalActions" style="display:none">
+            <button type="button" class="btn btn-secondary" id="btnAddProcess">הוסף תהליך נוסף</button>
+            <button type="submit" class="btn btn-submit" id="btnSubmit">
+              <span class="btn-text">שלח סקר</span>
+              <span class="btn-loading" style="display:none">
+                <span class="spinner"></span> שולח...
+              </span>
+            </button>
+          </div>
         </div>
 
       </form>
@@ -603,15 +612,18 @@
           </svg>
         </div>
         <h2 class="success-title">תודה רבה!</h2>
-        <p class="success-message">הסקר נשלח בהצלחה.<br />הנתונים נשמרו ויסייעו לנו לזהות הזדמנויות לייעול ואוטומציה.<br />נחזור אליכם בהמשך.</p>
+        <p class="success-message" id="successMessage">הסקר נשלח בהצלחה.</p>
         <button type="button" class="btn btn-secondary" id="btnNewSurvey">מלא סקר נוסף</button>
       </div>
 
       <!-- Error Banner -->
       <div class="error-banner" id="errorBanner" style="display:none">
-        <strong>שגיאה בשליחה.</strong> אנא נסו שוב. אם הבעיה חוזרת, צרו קשר עם מנהל המערכת.
+        <span id="errorBannerText"><strong>שגיאה בשליחה.</strong> אנא נסו שוב. אם הבעיה חוזרת, צרו קשר עם מנהל המערכת.</span>
         <button type="button" class="error-close" id="errorClose" aria-label="סגור">×</button>
       </div>
+
+      <!-- Toast -->
+      <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
     </div>
   </main>

@@ -17,6 +17,8 @@ var SHEET_NAME = 'תשובות הסקר';
 var HEADERS = [
   'תאריך שמירה',
   'תאריך יצירה באתר',
+  'מספר תהליך בסקר',
+  'סה״כ תהליכים בסקר',
   'שם המחלקה',
   'שם הצוות / היחידה',
   'שם ממלא הסקר',
@@ -84,7 +86,8 @@ function doPost(e) {
 
     var sheet = getOrCreateSheet();
     ensureHeaders(sheet);
-    appendRow(sheet, data);
+
+    var savedCount = saveSubmission(sheet, data);
 
     // Refresh the "דשבורד תיעדוף" prioritization dashboard after every
     // new response.
@@ -110,12 +113,69 @@ function doPost(e) {
       Logger.log('updateDashboard error (response was still saved): ' + dashErr.toString());
     }
 
-    return jsonResponse({ status: 'ok', message: 'Saved successfully' });
+    return jsonResponse({ status: 'ok', message: 'Saved successfully', processesSaved: savedCount });
 
   } catch (err) {
     Logger.log('doPost error: ' + err.toString());
     return jsonResponse({ status: 'error', message: err.toString() });
   }
+}
+
+// ============================================================
+//  saveSubmission
+//
+//  One employee/department may submit several processes in a single
+//  survey session. The frontend sends payload.respondent (filled once)
+//  plus payload.processes (an array, one entry per process). Each
+//  process becomes its own row, with the respondent details duplicated
+//  into every row. Returns the number of rows saved.
+//
+//  Backward compatible: if payload.processes isn't an array (the old,
+//  pre-multi-process flat submission shape, where every field lived at
+//  the top level of the payload), it's saved as a single row exactly
+//  like before.
+// ============================================================
+function saveSubmission(sheet, data) {
+  if (data && Array.isArray(data.processes) && data.processes.length > 0) {
+    var respondent = data.respondent || {};
+    var total = data.processes.length;
+
+    data.processes.forEach(function (process, i) {
+      appendProcessRow(sheet, {
+        respondent: respondent,
+        process: process,
+        processNumber: i + 1,
+        totalProcesses: total,
+        createdAt: data.createdAt,
+        userAgent: data.userAgent,
+        pageUrl: data.pageUrl,
+        rawJson: { respondent: respondent, process: process }
+      });
+    });
+
+    return total;
+  }
+
+  // Legacy single-process payload: respondent + process fields all sat
+  // together at the top level of `data`.
+  appendProcessRow(sheet, {
+    respondent: {
+      department: data.department,
+      team: data.team,
+      respondentName: data.respondentName,
+      role: data.role,
+      contactPerson: data.contactPerson
+    },
+    process: data,
+    processNumber: 1,
+    totalProcesses: 1,
+    createdAt: data.createdAt,
+    userAgent: data.userAgent,
+    pageUrl: data.pageUrl,
+    rawJson: data
+  });
+
+  return 1;
 }
 
 // ============================================================
@@ -184,62 +244,70 @@ function writeHeaderRow(sheet) {
   sheet.setColumnWidths(1, HEADERS.length, 160);
 }
 
-function appendRow(sheet, d) {
+// Appends a single process as one row, matching HEADERS exactly.
+// opts: { respondent, process, processNumber, totalProcesses,
+//         createdAt, userAgent, pageUrl, rawJson }
+function appendProcessRow(sheet, opts) {
+  var respondent = opts.respondent || {};
+  var process = opts.process || {};
+
   var row = [
     new Date(),
-    d.createdAt              || '',
-    d.department             || '',
-    d.team                   || '',
-    d.respondentName         || '',
-    d.role                   || '',
-    d.contactPerson          || '',
-    d.processName            || '',
-    d.processGoal            || '',
-    d.currentOwner           || '',
-    d.otherInvolved          || '',
-    d.processStart           || '',
-    d.processStartOther      || '',
-    d.currentSteps           || '',
-    d.systemsUsed            || '',
-    d.systemsUsedOther       || '',
-    d.manualCopy             || '',
-    d.manualCopyDetails      || '',
-    d.hasFiles               || '',
-    d.fileTypes              || '',
-    d.fileTypesOther         || '',
-    d.storageLocations       || '',
-    d.storageLocationsOther  || '',
-    d.hardToFind             || '',
-    d.mainPainPoint          || '',
-    d.timeTaking             || '',
-    d.errorProne             || '',
-    d.hardToTrack            || '',
-    d.duplicateEntry         || '',
-    d.frequency              || '',
-    d.frequencyOther         || '',
-    d.avgTime                || '',
-    d.automationNeeds        || '',
-    d.automationNeedsOther   || '',
-    d.needsForm              || '',
-    d.needsDashboard         || '',
-    d.needsAlerts            || '',
-    d.reportNeeded           || '',
-    d.hasApprovals           || '',
-    d.approvalDetails        || '',
-    d.differentPermissions   || '',
-    d.sensitiveInfo          || '',
-    d.ratingManual           || '',
-    d.ratingTime             || '',
-    d.ratingErrors           || '',
-    d.ratingUrgency          || '',
-    d.ratingPeople           || '',
-    d.mainProblem            || '',
-    d.desiredFuture          || '',
-    d.successDefinition      || '',
-    d.additionalNotes        || '',
-    d.pageUrl                || '',
-    d.userAgent              || '',
-    JSON.stringify(d)
+    opts.createdAt                  || '',
+    opts.processNumber              || '',
+    opts.totalProcesses             || '',
+    respondent.department           || '',
+    respondent.team                 || '',
+    respondent.respondentName       || '',
+    respondent.role                 || '',
+    respondent.contactPerson        || '',
+    process.processName             || '',
+    process.processGoal             || '',
+    process.currentOwner            || '',
+    process.otherInvolved           || '',
+    process.processStart            || '',
+    process.processStartOther       || '',
+    process.currentSteps            || '',
+    process.systemsUsed             || '',
+    process.systemsUsedOther        || '',
+    process.manualCopy              || '',
+    process.manualCopyDetails       || '',
+    process.hasFiles                || '',
+    process.fileTypes               || '',
+    process.fileTypesOther          || '',
+    process.storageLocations        || '',
+    process.storageLocationsOther   || '',
+    process.hardToFind              || '',
+    process.mainPainPoint           || '',
+    process.timeTaking              || '',
+    process.errorProne              || '',
+    process.hardToTrack             || '',
+    process.duplicateEntry          || '',
+    process.frequency               || '',
+    process.frequencyOther          || '',
+    process.avgTime                 || '',
+    process.automationNeeds         || '',
+    process.automationNeedsOther    || '',
+    process.needsForm               || '',
+    process.needsDashboard          || '',
+    process.needsAlerts             || '',
+    process.reportNeeded            || '',
+    process.hasApprovals            || '',
+    process.approvalDetails         || '',
+    process.differentPermissions    || '',
+    process.sensitiveInfo           || '',
+    process.ratingManual            || '',
+    process.ratingTime              || '',
+    process.ratingErrors            || '',
+    process.ratingUrgency           || '',
+    process.ratingPeople            || '',
+    process.mainProblem             || '',
+    process.desiredFuture           || '',
+    process.successDefinition       || '',
+    process.additionalNotes         || '',
+    opts.pageUrl                    || '',
+    opts.userAgent                  || '',
+    JSON.stringify(opts.rawJson)
   ];
 
   sheet.appendRow(row);
