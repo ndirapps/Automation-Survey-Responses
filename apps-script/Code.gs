@@ -69,10 +69,7 @@ var HEADERS = [
   'דירוג - כמה שגיאות מתרחשות',
   'דירוג - דחיפות השיפור',
   'דירוג - כמות אנשים מושפעים',
-  'הבעיה המרכזית כיום',
-  'המצב הרצוי בעתיד',
-  'מה ייחשב הצלחה',
-  'הערות נוספות',
+  'סיכום חופשי',
   'כתובת עמוד האתר',
   'פרטי דפדפן / משתמש',
   'JSON מלא'
@@ -317,10 +314,7 @@ function appendProcessRow(sheet, opts) {
     process.ratingErrors            || '',
     process.ratingUrgency           || '',
     process.ratingPeople            || '',
-    process.mainProblem             || '',
-    process.desiredFuture           || '',
-    process.successDefinition       || '',
-    process.additionalNotes         || '',
+    process.freeSummary             || '',
     opts.pageUrl                    || '',
     opts.userAgent                  || '',
     JSON.stringify(opts.rawJson)
