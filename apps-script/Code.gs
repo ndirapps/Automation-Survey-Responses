@@ -12,61 +12,63 @@ var SPREADSHEET_ID = 'YOUR_SPREADSHEET_ID_HERE';
 // Leave empty to disable.
 var SHARED_TOKEN = '';
 
-var SHEET_NAME = 'תגובות';
+var SHEET_NAME = 'תשובות הסקר';
 
 var HEADERS = [
-  'חותמת זמן',
-  'מחלקה',
-  'צוות / יחידה',
+  'תאריך שמירה',
+  'תאריך יצירה באתר',
+  'שם המחלקה',
+  'שם הצוות / היחידה',
   'שם ממלא הסקר',
   'תפקיד',
-  'איש קשר',
-  'שם התהליך',
+  'איש קשר להמשך בירור',
+  'שם התהליך / המשימה',
   'מטרת התהליך',
-  'מי מבצע',
-  'מי מעורב',
+  'מי מבצע את התהליך כיום',
+  'מי עוד מעורב בתהליך',
   'איך התהליך מתחיל',
-  'אחר – תחילת תהליך',
-  'שלבי העבודה כיום',
-  'מערכות / כלים',
-  'אחר – מערכות / כלים',
-  'העתקת מידע ידנית',
-  'מאיפה לאיפה',
-  'יש קבצים',
-  'סוגי קבצים',
-  'אחר – סוגי קבצים',
-  'מיקום אחסון',
-  'אחר – מיקום אחסון',
-  'קשה למצוא מסמכים',
-  'החלק הכי ידני / מורכב',
-  'מה לוקח הכי הרבה זמן',
-  'איפה קורות שגיאות',
-  'קשה לעקוב סטטוס',
-  'כפילויות',
-  'תדירות',
-  'אחר – תדירות',
-  'זמן ממוצע לביצוע',
-  'צרכי אוטומציה',
-  'אחר – צרכי אוטומציה',
-  'צריך טופס דיגיטלי',
-  'צריך דשבורד',
-  'צריך התראות',
-  'נדרש דוח',
-  'יש אישורים',
-  'מי מאשר',
-  'הרשאות שונות',
-  'מידע רגיש',
-  'דירוג ידניות',
-  'דירוג זמן',
-  'דירוג שגיאות',
-  'דירוג דחיפות',
-  'דירוג מושפעים',
-  'הבעיה המרכזית',
-  'מה היה רצוי',
+  'פירוט אחר - התחלת תהליך',
+  'תיאור שלבי העבודה כיום',
+  'מערכות / כלים בשימוש',
+  'פירוט אחר - מערכות / כלים',
+  'האם מעתיקים מידע ידנית',
+  'פירוט העתקת מידע',
+  'האם יש קבצים או מסמכים',
+  'סוגי קבצים / מסמכים',
+  'פירוט אחר - סוגי קבצים / מסמכים',
+  'איפה המידע או המסמכים נשמרים',
+  'פירוט אחר - מיקום אחסון',
+  'האם קשה למצוא מידע או מסמכים',
+  'החלק הכי ידני, מורכב או מסורבל בתהליך',
+  'השלב שלוקח הכי הרבה זמן',
+  'שלב שבו מתרחשות שגיאות',
+  'האם קשה לעקוב אחרי סטטוס הטיפול',
+  'האם יש כפילויות או הזנה חוזרת',
+  'תדירות התהליך',
+  'פירוט אחר - תדירות',
+  'זמן ביצוע ממוצע',
+  'חלקים רצויים לאוטומציה',
+  'פירוט אחר - אוטומציה',
+  'האם נדרש טופס דיגיטלי',
+  'האם נדרש מסך מעקב / דשבורד',
+  'האם נדרשות התראות אוטומטיות',
+  'האם צריך להפיק דוח או מסמך בסיום',
+  'האם יש אישורים בתהליך',
+  'פירוט אישורים וסדר אישור',
+  'האם יש הרשאות שונות למשתמשים',
+  'האם יש מידע רגיש או חסוי',
+  'דירוג - כמה התהליך ידני',
+  'דירוג - כמה התהליך גוזל זמן',
+  'דירוג - כמה שגיאות מתרחשות',
+  'דירוג - דחיפות השיפור',
+  'דירוג - כמות אנשים מושפעים',
+  'הבעיה המרכזית כיום',
+  'המצב הרצוי בעתיד',
   'מה ייחשב הצלחה',
-  'הערות',
-  'User Agent',
-  'JSON גולמי'
+  'הערות נוספות',
+  'כתובת עמוד האתר',
+  'פרטי דפדפן / משתמש',
+  'JSON מלא'
 ];
 
 // ============================================================
@@ -133,19 +135,35 @@ function getOrCreateSheet() {
 
 function ensureHeaders(sheet) {
   if (sheet.getLastRow() === 0) {
-    var headerRange = sheet.getRange(1, 1, 1, HEADERS.length);
-    headerRange.setValues([HEADERS]);
-    headerRange.setFontWeight('bold');
-    headerRange.setBackground('#061b33');
-    headerRange.setFontColor('#ffffff');
-    sheet.setFrozenRows(1);
-    sheet.setColumnWidths(1, HEADERS.length, 160);
+    writeHeaderRow(sheet);
+    return;
   }
+
+  // Self-heal: if the first row doesn't match the current Hebrew headers
+  // (e.g. an older deployment left stale/English headers), replace it
+  // without touching any existing data rows below it.
+  var existing = sheet.getRange(1, 1, 1, HEADERS.length).getValues()[0];
+  var matches = existing.length === HEADERS.length &&
+    existing.every(function (value, i) { return value === HEADERS[i]; });
+  if (!matches) {
+    writeHeaderRow(sheet);
+  }
+}
+
+function writeHeaderRow(sheet) {
+  var headerRange = sheet.getRange(1, 1, 1, HEADERS.length);
+  headerRange.setValues([HEADERS]);
+  headerRange.setFontWeight('bold');
+  headerRange.setBackground('#061b33');
+  headerRange.setFontColor('#ffffff');
+  sheet.setFrozenRows(1);
+  sheet.setColumnWidths(1, HEADERS.length, 160);
 }
 
 function appendRow(sheet, d) {
   var row = [
-    d.createdAt              || new Date().toISOString(),
+    new Date(),
+    d.createdAt              || '',
     d.department             || '',
     d.team                   || '',
     d.respondentName         || '',
@@ -195,6 +213,7 @@ function appendRow(sheet, d) {
     d.desiredFuture          || '',
     d.successDefinition      || '',
     d.additionalNotes        || '',
+    d.pageUrl                || '',
     d.userAgent              || '',
     JSON.stringify(d)
   ];

@@ -326,6 +326,7 @@ form.addEventListener('submit', async e => {
   } catch (err) {
     console.error('Submission error:', err);
     showError();
+  } finally {
     isSubmitting = false;
     setSubmitLoading(false);
   }
@@ -351,12 +352,14 @@ btnNewSurvey.addEventListener('click', () => {
   document.querySelectorAll('.invalid').forEach(el => el.classList.remove('invalid'));
   document.querySelectorAll('.field-error.visible').forEach(el => el.classList.remove('visible'));
 
+  hideError();
   successScreen.style.display = 'none';
   form.style.display = 'block';
   document.querySelector('.form-nav-buttons').style.display = 'flex';
 
   currentSection = 1;
   isSubmitting = false;
+  setSubmitLoading(false);
   showSection(1);
 });
 
