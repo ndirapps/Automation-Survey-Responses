@@ -1,0 +1,19 @@
+# Google Apps Script files
+Code.gs
+apps-script/Code.gs
+*.gs
+
+# Local / temporary files
+.DS_Store
+Thumbs.db
+*.log
+
+# Environment / secrets
+.env
+.env.local
+.env.*.local
+
+# Editor folders
+.vscode/
+.idea/
+
