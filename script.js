@@ -3,8 +3,7 @@
    =============================================================
    CONFIGURATION — paste your deployed Web App URL here:
    ============================================================= */
-const GOOGLE_SCRIPT_URL = 'YOUR_GOOGLE_SCRIPT_URL_HERE';
-// Example:
+const GOOGLE_SCRIPT_URL = "https://script.google.com/a/macros/nakama-software.com/s/AKfycbzHmeczkJ2P2LbF2ACvX3n5KAz6YaVViyP2uWAZDU_d8-ELB4-bTajtMbAEKu_DeXRH/exec";// Example:
 // const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby.../exec';
 
 /* ============================================================= */
