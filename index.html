@@ -3,593 +3,629 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="סקר מיפוי תהליכים לאוטומציה ודיגיטציה" />
-  <title>סקר מיפוי תהליכים - אוטומציה ודיגיטציה</title>
+  <meta name="description" content="סקר מיפוי תהליכים לאוטומציה ודיגיטציה | nakama-software" />
+  <title>סקר מיפוי תהליכים | nakama-software</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div class="page-wrapper">
+<div class="page-wrapper">
 
-    <!-- Header -->
-    <header class="site-header">
-      <div class="container">
-        <div class="header-inner">
-          <h1 class="site-title">מיפוי תהליכים לאוטומציה ודיגיטציה</h1>
-          <p class="site-subtitle">סקר קצר לאיתור הזדמנויות לייעול ושיפור תהליכים ארגוניים</p>
-        </div>
-      </div>
-    </header>
-
-    <!-- Progress Bar -->
-    <div class="progress-container" id="progressContainer">
-      <div class="container">
-        <div class="progress-info">
-          <span class="progress-label" id="progressLabel">שלב 1 מתוך 9</span>
-          <span class="progress-percent" id="progressPercent">11%</span>
-        </div>
-        <div class="progress-bar-track">
-          <div class="progress-bar-fill" id="progressBarFill" style="width: 11%"></div>
-        </div>
-        <nav class="section-nav" id="sectionNav" aria-label="ניווט בין חלקי הסקר">
-          <button type="button" class="nav-dot active" data-section="1" title="פרטים כלליים">1</button>
-          <button type="button" class="nav-dot" data-section="2" title="התהליך שרוצים לשפר">2</button>
-          <button type="button" class="nav-dot" data-section="3" title="איך עובדים היום">3</button>
-          <button type="button" class="nav-dot" data-section="4" title="קבצים ומסמכים">4</button>
-          <button type="button" class="nav-dot" data-section="5" title="בעיות וכאבים">5</button>
-          <button type="button" class="nav-dot" data-section="6" title="מה להפוך לדיגיטלי">6</button>
-          <button type="button" class="nav-dot" data-section="7" title="אישורים ורגישות">7</button>
-          <button type="button" class="nav-dot" data-section="8" title="דירוג מהיר">8</button>
-          <button type="button" class="nav-dot" data-section="9" title="סיכום">9</button>
-        </nav>
-      </div>
+  <!-- ===== Brand Header ===== -->
+  <header class="brand-header">
+    <img src="assets/nakama-logo.jpeg" alt="nakama-software logo" class="brand-logo" />
+    <div class="brand-text">
+      <h1 class="brand-survey-title">מיפוי תהליכים לאוטומציה ודיגיטציה</h1>
+      <p class="brand-name">nakama-software</p>
+      <p class="brand-subtitle">סקר לאיתור הזדמנויות לייעול ושיפור תהליכים ארגוניים</p>
     </div>
+  </header>
 
-    <!-- Main Form -->
-    <main class="main-content">
-      <div class="container">
-        <form id="surveyForm" novalidate>
-
-          <!-- ===== SECTION 1: פרטים כלליים ===== -->
-          <section class="form-section active" data-section="1" id="section1">
-            <div class="section-header">
-              <span class="section-number">01</span>
-              <div>
-                <h2 class="section-title">פרטים כלליים</h2>
-                <p class="section-desc">ספרו לנו מי אתם ומאיזו יחידה.</p>
-              </div>
-            </div>
-
-            <div class="fields-grid">
-              <div class="field-group full-width required">
-                <label for="department" class="field-label">שם המחלקה</label>
-                <input type="text" id="department" name="department" class="field-input" placeholder="למשל: כספים, לוגיסטיקה, משאבי אנוש" required />
-                <span class="field-error" id="department-error">שדה זה הוא חובה</span>
-              </div>
-
-              <div class="field-group">
-                <label for="team" class="field-label">שם הצוות / היחידה</label>
-                <input type="text" id="team" name="team" class="field-input" placeholder="אופציונלי" />
-              </div>
-
-              <div class="field-group">
-                <label for="respondentName" class="field-label">שם ממלא הסקר</label>
-                <input type="text" id="respondentName" name="respondentName" class="field-input" placeholder="אופציונלי" />
-              </div>
-
-              <div class="field-group">
-                <label for="role" class="field-label">תפקיד</label>
-                <input type="text" id="role" name="role" class="field-input" placeholder="אופציונלי" />
-              </div>
-
-              <div class="field-group">
-                <label for="contactPerson" class="field-label">איש קשר להמשך בירור</label>
-                <input type="text" id="contactPerson" name="contactPerson" class="field-input" placeholder="שם ו/או מייל, אופציונלי" />
-              </div>
-            </div>
-          </section>
-
-          <!-- ===== SECTION 2: התהליך שרוצים לשפר ===== -->
-          <section class="form-section" data-section="2" id="section2">
-            <div class="section-header">
-              <span class="section-number">02</span>
-              <div>
-                <h2 class="section-title">התהליך שרוצים לשפר</h2>
-                <p class="section-desc">תארו את התהליך הספציפי שאתם רוצים לשפר או להפוך לאוטומטי.</p>
-              </div>
-            </div>
-
-            <div class="fields-grid">
-              <div class="field-group full-width required">
-                <label for="processName" class="field-label">שם התהליך / המשימה</label>
-                <input type="text" id="processName" name="processName" class="field-input" placeholder="למשל: קבלת הזמנת לקוח, עדכון מלאי חודשי" required />
-                <span class="field-error" id="processName-error">שדה זה הוא חובה</span>
-              </div>
-
-              <div class="field-group full-width required">
-                <label for="processGoal" class="field-label">מה מטרת התהליך?</label>
-                <textarea id="processGoal" name="processGoal" class="field-textarea" placeholder="מה מושג בסיום התהליך? מה הפלט?" rows="3" required></textarea>
-                <span class="field-error" id="processGoal-error">שדה זה הוא חובה</span>
-              </div>
-
-              <div class="field-group full-width">
-                <label for="currentOwner" class="field-label">מי מבצע את התהליך כיום?</label>
-                <textarea id="currentOwner" name="currentOwner" class="field-textarea" placeholder="תפקיד, שם, צוות" rows="2"></textarea>
-              </div>
-
-              <div class="field-group full-width">
-                <label for="otherInvolved" class="field-label">מי עוד מעורב בתהליך?</label>
-                <textarea id="otherInvolved" name="otherInvolved" class="field-textarea" placeholder="גורמים פנימיים, מחלקות, לקוחות חיצוניים" rows="2"></textarea>
-              </div>
-            </div>
-          </section>
-
-          <!-- ===== SECTION 3: איך עובדים היום ===== -->
-          <section class="form-section" data-section="3" id="section3">
-            <div class="section-header">
-              <span class="section-number">03</span>
-              <div>
-                <h2 class="section-title">איך עובדים היום</h2>
-                <p class="section-desc">תארו את אופן העבודה הנוכחי בתהליך.</p>
-              </div>
-            </div>
-
-            <div class="fields-grid">
-              <div class="field-group full-width">
-                <label for="processStart" class="field-label">איך התהליך מתחיל?</label>
-                <select id="processStart" name="processStart" class="field-select">
-                  <option value="">-- בחרו --</option>
-                  <option value="מייל נכנס">מייל נכנס</option>
-                  <option value="קובץ שמתקבל">קובץ שמתקבל</option>
-                  <option value="בקשה ממנהל">בקשה ממנהל</option>
-                  <option value="בקשה מלקוח">בקשה מלקוח</option>
-                  <option value="טופס">טופס</option>
-                  <option value="תאריך קבוע">תאריך קבוע</option>
-                  <option value="פעולה במערכת">פעולה במערכת</option>
-                  <option value="אחר">אחר</option>
-                </select>
-              </div>
-
-              <div class="field-group full-width required">
-                <label for="currentSteps" class="field-label">תיאור קצר של שלבי העבודה כיום</label>
-                <textarea id="currentSteps" name="currentSteps" class="field-textarea" placeholder="פרטו את השלבים העיקריים בסדר כרונולוגי" rows="4" required></textarea>
-                <span class="field-error" id="currentSteps-error">שדה זה הוא חובה</span>
-              </div>
-
-              <div class="field-group full-width">
-                <label class="field-label">באילו מערכות / כלים משתמשים בתהליך?</label>
-                <div class="checkbox-grid" id="systemsUsed">
-                  <label class="checkbox-item"><input type="checkbox" name="systemsUsed" value="Outlook / מייל" /><span>Outlook / מייל</span></label>
-                  <label class="checkbox-item"><input type="checkbox" name="systemsUsed" value="Excel" /><span>Excel</span></label>
-                  <label class="checkbox-item"><input type="checkbox" name="systemsUsed" value="Word" /><span>Word</span></label>
-                  <label class="checkbox-item"><input type="checkbox" name="systemsUsed" value="Teams" /><span>Teams</span></label>
-                  <label class="checkbox-item"><input type="checkbox" name="systemsUsed" value="SharePoint" /><span>SharePoint</span></label>
-                  <label class="checkbox-item"><input type="checkbox" name="systemsUsed" value="OneDrive" /><span>OneDrive</span></label>
-                  <label class="checkbox-item"><input type="checkbox" name="systemsUsed" value="Google Drive" /><span>Google Drive</span></label>
-                  <label class="checkbox-item"><input type="checkbox" name="systemsUsed" value="מערכת פנימית" /><span>מערכת פנימית</span></label>
-                  <label class="checkbox-item"><input type="checkbox" name="systemsUsed" value="ERP" /><span>ERP</span></label>
-                  <label class="checkbox-item"><input type="checkbox" name="systemsUsed" value="CRM" /><span>CRM</span></label>
-                  <label class="checkbox-item"><input type="checkbox" name="systemsUsed" value="SAP" /><span>SAP</span></label>
-                  <label class="checkbox-item"><input type="checkbox" name="systemsUsed" value="Priority" /><span>Priority</span></label>
-                  <label class="checkbox-item"><input type="checkbox" name="systemsUsed" value="אתר חיצוני" /><span>אתר חיצוני</span></label>
-                  <label class="checkbox-item"><input type="checkbox" name="systemsUsed" value="תיקיית רשת" /><span>תיקיית רשת</span></label>
-                  <label class="checkbox-item"><input type="checkbox" name="systemsUsed" value="אחר" /><span>אחר</span></label>
-                </div>
-              </div>
-
-              <div class="field-group full-width">
-                <label class="field-label">האם מעתיקים מידע ידנית ממקום למקום?</label>
-                <div class="radio-group">
-                  <label class="radio-item"><input type="radio" name="manualCopy" value="כן" /><span>כן</span></label>
-                  <label class="radio-item"><input type="radio" name="manualCopy" value="לא" /><span>לא</span></label>
-                  <label class="radio-item"><input type="radio" name="manualCopy" value="לא בטוח" /><span>לא בטוח</span></label>
-                </div>
-              </div>
-
-              <div class="field-group full-width conditional-field" id="manualCopyDetails-group">
-                <label for="manualCopyDetails" class="field-label">אם כן, מאיפה לאיפה?</label>
-                <textarea id="manualCopyDetails" name="manualCopyDetails" class="field-textarea" placeholder="למשל: ממייל לאקסל, מאקסל למערכת" rows="2"></textarea>
-              </div>
-            </div>
-          </section>
-
-          <!-- ===== SECTION 4: קבצים, מסמכים ומידע ===== -->
-          <section class="form-section" data-section="4" id="section4">
-            <div class="section-header">
-              <span class="section-number">04</span>
-              <div>
-                <h2 class="section-title">קבצים, מסמכים ומידע</h2>
-                <p class="section-desc">מה המידע שעובר בתהליך ואיפה הוא נשמר.</p>
-              </div>
-            </div>
-
-            <div class="fields-grid">
-              <div class="field-group full-width">
-                <label class="field-label">האם יש קבצים או מסמכים בתהליך?</label>
-                <div class="radio-group">
-                  <label class="radio-item"><input type="radio" name="hasFiles" value="כן" /><span>כן</span></label>
-                  <label class="radio-item"><input type="radio" name="hasFiles" value="לא" /><span>לא</span></label>
-                </div>
-              </div>
-
-              <div class="field-group full-width">
-                <label class="field-label">סוגי קבצים / מסמכים</label>
-                <div class="checkbox-grid">
-                  <label class="checkbox-item"><input type="checkbox" name="fileTypes" value="Excel" /><span>Excel</span></label>
-                  <label class="checkbox-item"><input type="checkbox" name="fileTypes" value="PDF" /><span>PDF</span></label>
-                  <label class="checkbox-item"><input type="checkbox" name="fileTypes" value="Word" /><span>Word</span></label>
-                  <label class="checkbox-item"><input type="checkbox" name="fileTypes" value="סריקות" /><span>סריקות</span></label>
-                  <label class="checkbox-item"><input type="checkbox" name="fileTypes" value="תמונות" /><span>תמונות</span></label>
-                  <label class="checkbox-item"><input type="checkbox" name="fileTypes" value="טפסים" /><span>טפסים</span></label>
-                  <label class="checkbox-item"><input type="checkbox" name="fileTypes" value="דוחות" /><span>דוחות</span></label>
-                  <label class="checkbox-item"><input type="checkbox" name="fileTypes" value="מיילים" /><span>מיילים</span></label>
-                  <label class="checkbox-item"><input type="checkbox" name="fileTypes" value="אחר" /><span>אחר</span></label>
-                </div>
-              </div>
-
-              <div class="field-group full-width">
-                <label class="field-label">איפה המידע או המסמכים נשמרים כיום?</label>
-                <div class="checkbox-grid">
-                  <label class="checkbox-item"><input type="checkbox" name="storageLocations" value="מחשב אישי" /><span>מחשב אישי</span></label>
-                  <label class="checkbox-item"><input type="checkbox" name="storageLocations" value="תיקיית רשת" /><span>תיקיית רשת</span></label>
-                  <label class="checkbox-item"><input type="checkbox" name="storageLocations" value="מייל" /><span>מייל</span></label>
-                  <label class="checkbox-item"><input type="checkbox" name="storageLocations" value="SharePoint" /><span>SharePoint</span></label>
-                  <label class="checkbox-item"><input type="checkbox" name="storageLocations" value="OneDrive" /><span>OneDrive</span></label>
-                  <label class="checkbox-item"><input type="checkbox" name="storageLocations" value="Google Drive" /><span>Google Drive</span></label>
-                  <label class="checkbox-item"><input type="checkbox" name="storageLocations" value="מערכת ארגונית" /><span>מערכת ארגונית</span></label>
-                  <label class="checkbox-item"><input type="checkbox" name="storageLocations" value="מערכת חיצונית" /><span>מערכת חיצונית</span></label>
-                  <label class="checkbox-item"><input type="checkbox" name="storageLocations" value="אחר" /><span>אחר</span></label>
-                </div>
-              </div>
-
-              <div class="field-group full-width">
-                <label class="field-label">האם קשה למצוא מידע או מסמכים בתהליך?</label>
-                <div class="radio-group">
-                  <label class="radio-item"><input type="radio" name="hardToFind" value="כן" /><span>כן</span></label>
-                  <label class="radio-item"><input type="radio" name="hardToFind" value="לא" /><span>לא</span></label>
-                  <label class="radio-item"><input type="radio" name="hardToFind" value="לפעמים" /><span>לפעמים</span></label>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <!-- ===== SECTION 5: בעיות וכאבים ===== -->
-          <section class="form-section" data-section="5" id="section5">
-            <div class="section-header">
-              <span class="section-number">05</span>
-              <div>
-                <h2 class="section-title">בעיות וכאבים</h2>
-                <p class="section-desc">איפה הכאב הגדול ביותר בתהליך הנוכחי.</p>
-              </div>
-            </div>
-
-            <div class="fields-grid">
-              <div class="field-group full-width required">
-                <label for="mainPainPoint" class="field-label">מה החלק הכי ידני או מעיק בתהליך?</label>
-                <textarea id="mainPainPoint" name="mainPainPoint" class="field-textarea" placeholder="תארו את הפעולה שהכי לא מוסיפה ערך ולוקחת זמן" rows="3" required></textarea>
-                <span class="field-error" id="mainPainPoint-error">שדה זה הוא חובה</span>
-              </div>
-
-              <div class="field-group full-width">
-                <label for="timeTaking" class="field-label">מה לוקח הכי הרבה זמן?</label>
-                <textarea id="timeTaking" name="timeTaking" class="field-textarea" placeholder="השלב שמאט הכי הרבה" rows="2"></textarea>
-              </div>
-
-              <div class="field-group full-width">
-                <label for="errorProne" class="field-label">איפה קורות טעויות בדרך כלל?</label>
-                <textarea id="errorProne" name="errorProne" class="field-textarea" placeholder="נקודות כשל נפוצות" rows="2"></textarea>
-              </div>
-
-              <div class="field-group full-width">
-                <label class="field-label">האם קשה לעקוב אחרי סטטוס הטיפול?</label>
-                <div class="radio-group">
-                  <label class="radio-item"><input type="radio" name="hardToTrack" value="כן" /><span>כן</span></label>
-                  <label class="radio-item"><input type="radio" name="hardToTrack" value="לא" /><span>לא</span></label>
-                  <label class="radio-item"><input type="radio" name="hardToTrack" value="לפעמים" /><span>לפעמים</span></label>
-                </div>
-              </div>
-
-              <div class="field-group full-width">
-                <label class="field-label">האם יש כפילויות או הזנה חוזרת של אותו מידע?</label>
-                <div class="radio-group">
-                  <label class="radio-item"><input type="radio" name="duplicateEntry" value="כן" /><span>כן</span></label>
-                  <label class="radio-item"><input type="radio" name="duplicateEntry" value="לא" /><span>לא</span></label>
-                  <label class="radio-item"><input type="radio" name="duplicateEntry" value="לפעמים" /><span>לפעמים</span></label>
-                </div>
-              </div>
-
-              <div class="field-group">
-                <label for="frequency" class="field-label">כמה פעמים התהליך קורה?</label>
-                <select id="frequency" name="frequency" class="field-select">
-                  <option value="">-- בחרו --</option>
-                  <option value="כל יום">כל יום</option>
-                  <option value="כמה פעמים בשבוע">כמה פעמים בשבוע</option>
-                  <option value="כמה פעמים בחודש">כמה פעמים בחודש</option>
-                  <option value="לפי צורך">לפי צורך</option>
-                  <option value="אחר">אחר</option>
-                </select>
-              </div>
-
-              <div class="field-group">
-                <label for="avgTime" class="field-label">כמה זמן בערך לוקח לבצע את התהליך בכל פעם?</label>
-                <input type="text" id="avgTime" name="avgTime" class="field-input" placeholder="למשל: 30 דקות, שעתיים" />
-              </div>
-            </div>
-          </section>
-
-          <!-- ===== SECTION 6: מה להפוך לדיגיטלי ===== -->
-          <section class="form-section" data-section="6" id="section6">
-            <div class="section-header">
-              <span class="section-number">06</span>
-              <div>
-                <h2 class="section-title">מה כדאי להפוך לדיגיטלי או אוטומטי</h2>
-                <p class="section-desc">סמנו מה אתם רוצים שיקרה אחרת.</p>
-              </div>
-            </div>
-
-            <div class="fields-grid">
-              <div class="field-group full-width">
-                <label class="field-label">אילו חלקים הייתם רוצים להפוך לאוטומטיים?</label>
-                <div class="checkbox-grid">
-                  <label class="checkbox-item"><input type="checkbox" name="automationNeeds" value="פתיחת בקשה" /><span>פתיחת בקשה</span></label>
-                  <label class="checkbox-item"><input type="checkbox" name="automationNeeds" value="שליחת מייל" /><span>שליחת מייל</span></label>
-                  <label class="checkbox-item"><input type="checkbox" name="automationNeeds" value="שמירת מסמכים" /><span>שמירת מסמכים</span></label>
-                  <label class="checkbox-item"><input type="checkbox" name="automationNeeds" value="עדכון מערכת" /><span>עדכון מערכת</span></label>
-                  <label class="checkbox-item"><input type="checkbox" name="automationNeeds" value="העתקת מידע בין מערכות" /><span>העתקת מידע בין מערכות</span></label>
-                  <label class="checkbox-item"><input type="checkbox" name="automationNeeds" value="בדיקת נתונים" /><span>בדיקת נתונים</span></label>
-                  <label class="checkbox-item"><input type="checkbox" name="automationNeeds" value="הפקת דוח" /><span>הפקת דוח</span></label>
-                  <label class="checkbox-item"><input type="checkbox" name="automationNeeds" value="שליחת תזכורות" /><span>שליחת תזכורות</span></label>
-                  <label class="checkbox-item"><input type="checkbox" name="automationNeeds" value="מעקב סטטוס" /><span>מעקב סטטוס</span></label>
-                  <label class="checkbox-item"><input type="checkbox" name="automationNeeds" value="אישורים דיגיטליים" /><span>אישורים דיגיטליים</span></label>
-                  <label class="checkbox-item"><input type="checkbox" name="automationNeeds" value="אחר" /><span>אחר</span></label>
-                </div>
-              </div>
-
-              <div class="field-group">
-                <label class="field-label">האם צריך טופס דיגיטלי?</label>
-                <div class="radio-group">
-                  <label class="radio-item"><input type="radio" name="needsForm" value="כן" /><span>כן</span></label>
-                  <label class="radio-item"><input type="radio" name="needsForm" value="לא" /><span>לא</span></label>
-                  <label class="radio-item"><input type="radio" name="needsForm" value="אולי" /><span>אולי</span></label>
-                </div>
-              </div>
-
-              <div class="field-group">
-                <label class="field-label">האם צריך מסך מעקב / דשבורד?</label>
-                <div class="radio-group">
-                  <label class="radio-item"><input type="radio" name="needsDashboard" value="כן" /><span>כן</span></label>
-                  <label class="radio-item"><input type="radio" name="needsDashboard" value="לא" /><span>לא</span></label>
-                  <label class="radio-item"><input type="radio" name="needsDashboard" value="אולי" /><span>אולי</span></label>
-                </div>
-              </div>
-
-              <div class="field-group">
-                <label class="field-label">האם נדרשות התראות אוטומטיות?</label>
-                <div class="radio-group">
-                  <label class="radio-item"><input type="radio" name="needsAlerts" value="כן" /><span>כן</span></label>
-                  <label class="radio-item"><input type="radio" name="needsAlerts" value="לא" /><span>לא</span></label>
-                  <label class="radio-item"><input type="radio" name="needsAlerts" value="אולי" /><span>אולי</span></label>
-                </div>
-              </div>
-
-              <div class="field-group full-width">
-                <label for="reportNeeded" class="field-label">האם יש צורך להפיק דוח או מסמך בסוף התהליך?</label>
-                <textarea id="reportNeeded" name="reportNeeded" class="field-textarea" placeholder="אם כן, תארו מה הדוח צריך להכיל" rows="2"></textarea>
-              </div>
-            </div>
-          </section>
-
-          <!-- ===== SECTION 7: אישורים, הרשאות ורגישות מידע ===== -->
-          <section class="form-section" data-section="7" id="section7">
-            <div class="section-header">
-              <span class="section-number">07</span>
-              <div>
-                <h2 class="section-title">אישורים, הרשאות ורגישות מידע</h2>
-                <p class="section-desc">מי מאשר ומה הרגישות של המידע שעובר בתהליך.</p>
-              </div>
-            </div>
-
-            <div class="fields-grid">
-              <div class="field-group full-width">
-                <label class="field-label">האם יש אישורים בתהליך?</label>
-                <div class="radio-group">
-                  <label class="radio-item"><input type="radio" name="hasApprovals" value="כן" /><span>כן</span></label>
-                  <label class="radio-item"><input type="radio" name="hasApprovals" value="לא" /><span>לא</span></label>
-                </div>
-              </div>
-
-              <div class="field-group full-width conditional-field" id="approvalDetails-group">
-                <label for="approvalDetails" class="field-label">אם כן, מי מאשר ובאיזה סדר?</label>
-                <textarea id="approvalDetails" name="approvalDetails" class="field-textarea" placeholder="למשל: מנהל ישיר, לאחר מכן כספים" rows="2"></textarea>
-              </div>
-
-              <div class="field-group full-width">
-                <label class="field-label">האם יש הרשאות שונות למשתמשים שונים?</label>
-                <div class="radio-group">
-                  <label class="radio-item"><input type="radio" name="differentPermissions" value="כן" /><span>כן</span></label>
-                  <label class="radio-item"><input type="radio" name="differentPermissions" value="לא" /><span>לא</span></label>
-                  <label class="radio-item"><input type="radio" name="differentPermissions" value="לא בטוח" /><span>לא בטוח</span></label>
-                </div>
-              </div>
-
-              <div class="field-group full-width">
-                <label class="field-label">האם יש מידע רגיש או חסוי בתהליך?</label>
-                <div class="radio-group">
-                  <label class="radio-item"><input type="radio" name="sensitiveInfo" value="כן" /><span>כן</span></label>
-                  <label class="radio-item"><input type="radio" name="sensitiveInfo" value="לא" /><span>לא</span></label>
-                  <label class="radio-item"><input type="radio" name="sensitiveInfo" value="לא בטוח" /><span>לא בטוח</span></label>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <!-- ===== SECTION 8: דירוג מהיר ===== -->
-          <section class="form-section" data-section="8" id="section8">
-            <div class="section-header">
-              <span class="section-number">08</span>
-              <div>
-                <h2 class="section-title">דירוג מהיר</h2>
-                <p class="section-desc">דרגו את התהליך בסולם 1 עד 5 (1 = נמוך, 5 = גבוה מאוד).</p>
-              </div>
-            </div>
-
-            <div class="fields-grid">
-              <div class="field-group full-width">
-                <div class="rating-item">
-                  <label class="field-label">כמה התהליך ידני?</label>
-                  <div class="rating-scale" data-name="ratingManual">
-                    <span class="rating-anchor">מעט</span>
-                    <div class="rating-buttons">
-                      <label class="rating-btn"><input type="radio" name="ratingManual" value="1" /><span>1</span></label>
-                      <label class="rating-btn"><input type="radio" name="ratingManual" value="2" /><span>2</span></label>
-                      <label class="rating-btn"><input type="radio" name="ratingManual" value="3" /><span>3</span></label>
-                      <label class="rating-btn"><input type="radio" name="ratingManual" value="4" /><span>4</span></label>
-                      <label class="rating-btn"><input type="radio" name="ratingManual" value="5" /><span>5</span></label>
-                    </div>
-                    <span class="rating-anchor">מאוד</span>
-                  </div>
-                </div>
-
-                <div class="rating-item">
-                  <label class="field-label">כמה התהליך גוזל זמן?</label>
-                  <div class="rating-scale" data-name="ratingTime">
-                    <span class="rating-anchor">מעט</span>
-                    <div class="rating-buttons">
-                      <label class="rating-btn"><input type="radio" name="ratingTime" value="1" /><span>1</span></label>
-                      <label class="rating-btn"><input type="radio" name="ratingTime" value="2" /><span>2</span></label>
-                      <label class="rating-btn"><input type="radio" name="ratingTime" value="3" /><span>3</span></label>
-                      <label class="rating-btn"><input type="radio" name="ratingTime" value="4" /><span>4</span></label>
-                      <label class="rating-btn"><input type="radio" name="ratingTime" value="5" /><span>5</span></label>
-                    </div>
-                    <span class="rating-anchor">מאוד</span>
-                  </div>
-                </div>
-
-                <div class="rating-item">
-                  <label class="field-label">כמה טעויות קורות בתהליך?</label>
-                  <div class="rating-scale" data-name="ratingErrors">
-                    <span class="rating-anchor">מעט</span>
-                    <div class="rating-buttons">
-                      <label class="rating-btn"><input type="radio" name="ratingErrors" value="1" /><span>1</span></label>
-                      <label class="rating-btn"><input type="radio" name="ratingErrors" value="2" /><span>2</span></label>
-                      <label class="rating-btn"><input type="radio" name="ratingErrors" value="3" /><span>3</span></label>
-                      <label class="rating-btn"><input type="radio" name="ratingErrors" value="4" /><span>4</span></label>
-                      <label class="rating-btn"><input type="radio" name="ratingErrors" value="5" /><span>5</span></label>
-                    </div>
-                    <span class="rating-anchor">הרבה</span>
-                  </div>
-                </div>
-
-                <div class="rating-item">
-                  <label class="field-label">כמה דחוף לשפר את התהליך?</label>
-                  <div class="rating-scale" data-name="ratingUrgency">
-                    <span class="rating-anchor">פחות דחוף</span>
-                    <div class="rating-buttons">
-                      <label class="rating-btn"><input type="radio" name="ratingUrgency" value="1" /><span>1</span></label>
-                      <label class="rating-btn"><input type="radio" name="ratingUrgency" value="2" /><span>2</span></label>
-                      <label class="rating-btn"><input type="radio" name="ratingUrgency" value="3" /><span>3</span></label>
-                      <label class="rating-btn"><input type="radio" name="ratingUrgency" value="4" /><span>4</span></label>
-                      <label class="rating-btn"><input type="radio" name="ratingUrgency" value="5" /><span>5</span></label>
-                    </div>
-                    <span class="rating-anchor">דחוף מאוד</span>
-                  </div>
-                </div>
-
-                <div class="rating-item">
-                  <label class="field-label">כמה אנשים מושפעים מהתהליך?</label>
-                  <div class="rating-scale" data-name="ratingPeople">
-                    <span class="rating-anchor">מעטים</span>
-                    <div class="rating-buttons">
-                      <label class="rating-btn"><input type="radio" name="ratingPeople" value="1" /><span>1</span></label>
-                      <label class="rating-btn"><input type="radio" name="ratingPeople" value="2" /><span>2</span></label>
-                      <label class="rating-btn"><input type="radio" name="ratingPeople" value="3" /><span>3</span></label>
-                      <label class="rating-btn"><input type="radio" name="ratingPeople" value="4" /><span>4</span></label>
-                      <label class="rating-btn"><input type="radio" name="ratingPeople" value="5" /><span>5</span></label>
-                    </div>
-                    <span class="rating-anchor">הרבה</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <!-- ===== SECTION 9: סיכום ===== -->
-          <section class="form-section" data-section="9" id="section9">
-            <div class="section-header">
-              <span class="section-number">09</span>
-              <div>
-                <h2 class="section-title">סיכום</h2>
-                <p class="section-desc">כמה שאלות אחרונות לסיכום.</p>
-              </div>
-            </div>
-
-            <div class="fields-grid">
-              <div class="field-group full-width required">
-                <label for="mainProblem" class="field-label">במשפט אחד: מה הבעיה המרכזית כיום?</label>
-                <textarea id="mainProblem" name="mainProblem" class="field-textarea" placeholder="תמצתו את הבעיה המרכזית" rows="2" required></textarea>
-                <span class="field-error" id="mainProblem-error">שדה זה הוא חובה</span>
-              </div>
-
-              <div class="field-group full-width">
-                <label for="desiredFuture" class="field-label">מה הייתם רוצים שיקרה במקום?</label>
-                <textarea id="desiredFuture" name="desiredFuture" class="field-textarea" placeholder="תארו את המצב הרצוי" rows="2"></textarea>
-              </div>
-
-              <div class="field-group full-width">
-                <label for="successDefinition" class="field-label">מה מבחינתכם ייחשב הצלחה?</label>
-                <textarea id="successDefinition" name="successDefinition" class="field-textarea" placeholder="למשל: חיסכון של שעה ביום, אפס שגיאות הזנה" rows="2"></textarea>
-              </div>
-
-              <div class="field-group full-width">
-                <label for="additionalNotes" class="field-label">הערות נוספות</label>
-                <textarea id="additionalNotes" name="additionalNotes" class="field-textarea" placeholder="כל מידע נוסף שחשוב לדעת" rows="3"></textarea>
-              </div>
-            </div>
-          </section>
-
-          <!-- Navigation Buttons -->
-          <div class="form-nav-buttons">
-            <button type="button" class="btn btn-secondary" id="btnPrev" style="display:none">הקודם</button>
-            <button type="button" class="btn btn-primary" id="btnNext">הבא</button>
-            <button type="submit" class="btn btn-submit" id="btnSubmit" style="display:none">
-              <span class="btn-text">שליחת הסקר</span>
-              <span class="btn-loading" style="display:none">
-                <span class="spinner"></span> שולח...
-              </span>
-            </button>
-          </div>
-
-        </form>
-
-        <!-- Success Screen -->
-        <div class="success-screen" id="successScreen" style="display:none">
-          <div class="success-icon">
-            <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="26" cy="26" r="25" stroke="currentColor" stroke-width="2"/>
-              <path d="M14 26L22 34L38 18" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </div>
-          <h2 class="success-title">תודה רבה!</h2>
-          <p class="success-message">הסקר נשלח בהצלחה.<br />הנתונים נשמרו ויסייעו לנו לזהות הזדמנויות לייעול ואוטומציה.<br />נחזור אליכם בהמשך.</p>
-          <button type="button" class="btn btn-secondary" id="btnNewSurvey">מלא סקר נוסף</button>
-        </div>
-
-        <!-- Error Banner -->
-        <div class="error-banner" id="errorBanner" style="display:none">
-          <strong>שגיאה בשליחה.</strong> אנא נסו שוב. אם הבעיה חוזרת, צרו קשר עם מנהל המערכת.
-          <button type="button" class="error-close" id="errorClose" aria-label="סגור">×</button>
-        </div>
-
+  <!-- ===== Progress Bar ===== -->
+  <div class="progress-container" id="progressContainer">
+    <div class="container">
+      <div class="progress-info">
+        <span class="progress-label" id="progressLabel">שלב 1 מתוך 9</span>
+        <span class="progress-percent" id="progressPercent">11%</span>
       </div>
-    </main>
-
-    <footer class="site-footer">
-      <div class="container">
-        <p>סקר זה מיועד לשימוש פנימי בלבד. הנתונים נשמרים ב-Google Sheets ולא מועברים לגורמים חיצוניים.</p>
+      <div class="progress-bar-track">
+        <div class="progress-bar-fill" id="progressBarFill" style="width:11%"></div>
       </div>
-    </footer>
-
+      <nav class="section-nav" id="sectionNav" aria-label="ניווט בין חלקי הסקר">
+        <button type="button" class="nav-dot active" data-section="1" title="פרטים כלליים">1</button>
+        <button type="button" class="nav-dot" data-section="2" title="התהליך שרוצים לשפר">2</button>
+        <button type="button" class="nav-dot" data-section="3" title="איך עובדים היום">3</button>
+        <button type="button" class="nav-dot" data-section="4" title="קבצים ומסמכים">4</button>
+        <button type="button" class="nav-dot" data-section="5" title="בעיות ואתגרים">5</button>
+        <button type="button" class="nav-dot" data-section="6" title="מה להפוך לדיגיטלי">6</button>
+        <button type="button" class="nav-dot" data-section="7" title="אישורים ורגישות">7</button>
+        <button type="button" class="nav-dot" data-section="8" title="דירוג מהיר">8</button>
+        <button type="button" class="nav-dot" data-section="9" title="סיכום">9</button>
+      </nav>
+    </div>
   </div>
 
-  <script src="script.js"></script>
+  <!-- ===== Main Form ===== -->
+  <main class="main-content">
+    <div class="container">
+      <form id="surveyForm" novalidate>
+
+        <!-- ===== SECTION 1: פרטים כלליים ===== -->
+        <section class="form-section active" data-section="1" id="section1">
+          <div class="section-header">
+            <span class="section-number">01</span>
+            <div>
+              <h2 class="section-title">פרטים כלליים</h2>
+              <p class="section-desc">ספרו לנו מי אתם ומאיזו יחידה.</p>
+            </div>
+          </div>
+          <div class="fields-grid">
+            <div class="field-group full-width required">
+              <label for="department" class="field-label">שם המחלקה</label>
+              <input type="text" id="department" name="department" class="field-input" placeholder="למשל: כספים, לוגיסטיקה, משאבי אנוש" required />
+              <span class="field-error" id="department-error">שדה זה הוא חובה</span>
+            </div>
+            <div class="field-group">
+              <label for="team" class="field-label">שם הצוות / היחידה</label>
+              <input type="text" id="team" name="team" class="field-input" placeholder="אופציונלי" />
+            </div>
+            <div class="field-group">
+              <label for="respondentName" class="field-label">שם ממלא הסקר</label>
+              <input type="text" id="respondentName" name="respondentName" class="field-input" placeholder="אופציונלי" />
+            </div>
+            <div class="field-group">
+              <label for="role" class="field-label">תפקיד</label>
+              <input type="text" id="role" name="role" class="field-input" placeholder="אופציונלי" />
+            </div>
+            <div class="field-group">
+              <label for="contactPerson" class="field-label">איש קשר להמשך בירור</label>
+              <input type="text" id="contactPerson" name="contactPerson" class="field-input" placeholder="שם ו/או מייל, אופציונלי" />
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 2: התהליך שרוצים לשפר ===== -->
+        <section class="form-section" data-section="2" id="section2">
+          <div class="section-header">
+            <span class="section-number">02</span>
+            <div>
+              <h2 class="section-title">התהליך שרוצים לשפר</h2>
+              <p class="section-desc">תארו את התהליך הספציפי שאתם רוצים לשפר או להפוך לאוטומטי.</p>
+            </div>
+          </div>
+          <div class="fields-grid">
+            <div class="field-group full-width required">
+              <label for="processName" class="field-label">שם התהליך / המשימה</label>
+              <input type="text" id="processName" name="processName" class="field-input" placeholder="למשל: קבלת הזמנת לקוח, עדכון מלאי חודשי" required />
+              <span class="field-error" id="processName-error">שדה זה הוא חובה</span>
+            </div>
+            <div class="field-group full-width required">
+              <label for="processGoal" class="field-label">מה מטרת התהליך?</label>
+              <textarea id="processGoal" name="processGoal" class="field-textarea" placeholder="מה מושג בסיום התהליך? מה הפלט?" rows="3" required></textarea>
+              <span class="field-error" id="processGoal-error">שדה זה הוא חובה</span>
+            </div>
+            <div class="field-group full-width">
+              <label for="currentOwner" class="field-label">מי מבצע את התהליך כיום?</label>
+              <textarea id="currentOwner" name="currentOwner" class="field-textarea" placeholder="תפקיד, שם, צוות" rows="2"></textarea>
+            </div>
+            <div class="field-group full-width">
+              <label for="otherInvolved" class="field-label">מי עוד מעורב בתהליך?</label>
+              <textarea id="otherInvolved" name="otherInvolved" class="field-textarea" placeholder="גורמים פנימיים, מחלקות, לקוחות חיצוניים" rows="2"></textarea>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 3: איך עובדים היום ===== -->
+        <section class="form-section" data-section="3" id="section3">
+          <div class="section-header">
+            <span class="section-number">03</span>
+            <div>
+              <h2 class="section-title">איך עובדים היום</h2>
+              <p class="section-desc">תארו את אופן העבודה הנוכחי בתהליך.</p>
+            </div>
+          </div>
+          <div class="fields-grid">
+
+            <div class="field-group full-width">
+              <label for="processStart" class="field-label">איך התהליך מתחיל?</label>
+              <select id="processStart" name="processStart" class="field-select"
+                      data-other-target="processStartOther">
+                <option value="">-- בחרו --</option>
+                <option value="מייל נכנס">מייל נכנס</option>
+                <option value="קובץ שמתקבל">קובץ שמתקבל</option>
+                <option value="בקשה ממנהל">בקשה ממנהל</option>
+                <option value="בקשה מלקוח">בקשה מלקוח</option>
+                <option value="טופס">טופס</option>
+                <option value="תאריך קבוע">תאריך קבוע</option>
+                <option value="פעולה במערכת">פעולה במערכת</option>
+                <option value="אחר">אחר</option>
+              </select>
+              <div class="other-field-container" id="processStartOther-container">
+                <label class="field-label" for="processStartOther">נא לפרט כיצד התהליך מתחיל</label>
+                <input type="text" id="processStartOther" name="processStartOther" class="field-input" placeholder="תארו את נקודת ההתחלה של התהליך" />
+              </div>
+            </div>
+
+            <div class="field-group full-width required">
+              <label for="currentSteps" class="field-label">תיאור קצר של שלבי העבודה כיום</label>
+              <textarea id="currentSteps" name="currentSteps" class="field-textarea" placeholder="פרטו את השלבים העיקריים בסדר כרונולוגי" rows="4" required></textarea>
+              <span class="field-error" id="currentSteps-error">שדה זה הוא חובה</span>
+            </div>
+
+            <div class="field-group full-width">
+              <label class="field-label">באילו מערכות / כלים משתמשים בתהליך?</label>
+              <div class="checkbox-grid" id="systemsUsedGrid">
+                <label class="checkbox-item"><input type="checkbox" name="systemsUsed" value="Outlook / מייל" /><span>Outlook / מייל</span></label>
+                <label class="checkbox-item"><input type="checkbox" name="systemsUsed" value="Excel" /><span>Excel</span></label>
+                <label class="checkbox-item"><input type="checkbox" name="systemsUsed" value="Word" /><span>Word</span></label>
+                <label class="checkbox-item"><input type="checkbox" name="systemsUsed" value="Teams" /><span>Teams</span></label>
+                <label class="checkbox-item"><input type="checkbox" name="systemsUsed" value="SharePoint" /><span>SharePoint</span></label>
+                <label class="checkbox-item"><input type="checkbox" name="systemsUsed" value="OneDrive" /><span>OneDrive</span></label>
+                <label class="checkbox-item"><input type="checkbox" name="systemsUsed" value="Google Drive" /><span>Google Drive</span></label>
+                <label class="checkbox-item"><input type="checkbox" name="systemsUsed" value="מערכת פנימית" /><span>מערכת פנימית</span></label>
+                <label class="checkbox-item"><input type="checkbox" name="systemsUsed" value="ERP" /><span>ERP</span></label>
+                <label class="checkbox-item"><input type="checkbox" name="systemsUsed" value="CRM" /><span>CRM</span></label>
+                <label class="checkbox-item"><input type="checkbox" name="systemsUsed" value="SAP" /><span>SAP</span></label>
+                <label class="checkbox-item"><input type="checkbox" name="systemsUsed" value="Priority" /><span>Priority</span></label>
+                <label class="checkbox-item"><input type="checkbox" name="systemsUsed" value="אתר חיצוני" /><span>אתר חיצוני</span></label>
+                <label class="checkbox-item"><input type="checkbox" name="systemsUsed" value="תיקיית רשת" /><span>תיקיית רשת</span></label>
+                <label class="checkbox-item">
+                  <input type="checkbox" name="systemsUsed" value="אחר"
+                         data-other-target="systemsUsedOther" /><span>אחר</span>
+                </label>
+              </div>
+              <div class="other-field-container" id="systemsUsedOther-container">
+                <label class="field-label" for="systemsUsedOther">נא לפרט מערכת / כלי נוסף</label>
+                <input type="text" id="systemsUsedOther" name="systemsUsedOther" class="field-input" placeholder="שם המערכת או הכלי" />
+              </div>
+            </div>
+
+            <div class="field-group full-width">
+              <label class="field-label">האם מעתיקים מידע ידנית ממקום למקום?</label>
+              <div class="radio-group">
+                <label class="radio-item"><input type="radio" name="manualCopy" value="כן" /><span>כן</span></label>
+                <label class="radio-item"><input type="radio" name="manualCopy" value="לא" /><span>לא</span></label>
+                <label class="radio-item"><input type="radio" name="manualCopy" value="לא בטוח" /><span>לא בטוח</span></label>
+              </div>
+            </div>
+
+            <div class="field-group full-width conditional-field" id="manualCopyDetails-group">
+              <label for="manualCopyDetails" class="field-label">אם כן, מאיפה לאיפה?</label>
+              <textarea id="manualCopyDetails" name="manualCopyDetails" class="field-textarea" placeholder="למשל: ממייל לאקסל, מאקסל למערכת" rows="2"></textarea>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ===== SECTION 4: קבצים, מסמכים ומידע ===== -->
+        <section class="form-section" data-section="4" id="section4">
+          <div class="section-header">
+            <span class="section-number">04</span>
+            <div>
+              <h2 class="section-title">קבצים, מסמכים ומידע</h2>
+              <p class="section-desc">מה המידע שעובר בתהליך ואיפה הוא נשמר.</p>
+            </div>
+          </div>
+          <div class="fields-grid">
+
+            <div class="field-group full-width">
+              <label class="field-label">האם יש קבצים או מסמכים בתהליך?</label>
+              <div class="radio-group">
+                <label class="radio-item"><input type="radio" name="hasFiles" value="כן" /><span>כן</span></label>
+                <label class="radio-item"><input type="radio" name="hasFiles" value="לא" /><span>לא</span></label>
+              </div>
+            </div>
+
+            <div class="field-group full-width">
+              <label class="field-label">סוגי קבצים / מסמכים</label>
+              <div class="checkbox-grid">
+                <label class="checkbox-item"><input type="checkbox" name="fileTypes" value="Excel" /><span>Excel</span></label>
+                <label class="checkbox-item"><input type="checkbox" name="fileTypes" value="PDF" /><span>PDF</span></label>
+                <label class="checkbox-item"><input type="checkbox" name="fileTypes" value="Word" /><span>Word</span></label>
+                <label class="checkbox-item"><input type="checkbox" name="fileTypes" value="סריקות" /><span>סריקות</span></label>
+                <label class="checkbox-item"><input type="checkbox" name="fileTypes" value="תמונות" /><span>תמונות</span></label>
+                <label class="checkbox-item"><input type="checkbox" name="fileTypes" value="טפסים" /><span>טפסים</span></label>
+                <label class="checkbox-item"><input type="checkbox" name="fileTypes" value="דוחות" /><span>דוחות</span></label>
+                <label class="checkbox-item"><input type="checkbox" name="fileTypes" value="מיילים" /><span>מיילים</span></label>
+                <label class="checkbox-item">
+                  <input type="checkbox" name="fileTypes" value="אחר"
+                         data-other-target="fileTypesOther" /><span>אחר</span>
+                </label>
+              </div>
+              <div class="other-field-container" id="fileTypesOther-container">
+                <label class="field-label" for="fileTypesOther">נא לפרט סוג קובץ / מסמך נוסף</label>
+                <input type="text" id="fileTypesOther" name="fileTypesOther" class="field-input" placeholder="תארו את סוג הקובץ" />
+              </div>
+            </div>
+
+            <div class="field-group full-width">
+              <label class="field-label">איפה המידע או המסמכים נשמרים כיום?</label>
+              <div class="checkbox-grid">
+                <label class="checkbox-item"><input type="checkbox" name="storageLocations" value="מחשב אישי" /><span>מחשב אישי</span></label>
+                <label class="checkbox-item"><input type="checkbox" name="storageLocations" value="תיקיית רשת" /><span>תיקיית רשת</span></label>
+                <label class="checkbox-item"><input type="checkbox" name="storageLocations" value="מייל" /><span>מייל</span></label>
+                <label class="checkbox-item"><input type="checkbox" name="storageLocations" value="SharePoint" /><span>SharePoint</span></label>
+                <label class="checkbox-item"><input type="checkbox" name="storageLocations" value="OneDrive" /><span>OneDrive</span></label>
+                <label class="checkbox-item"><input type="checkbox" name="storageLocations" value="Google Drive" /><span>Google Drive</span></label>
+                <label class="checkbox-item"><input type="checkbox" name="storageLocations" value="מערכת ארגונית" /><span>מערכת ארגונית</span></label>
+                <label class="checkbox-item"><input type="checkbox" name="storageLocations" value="מערכת חיצונית" /><span>מערכת חיצונית</span></label>
+                <label class="checkbox-item">
+                  <input type="checkbox" name="storageLocations" value="אחר"
+                         data-other-target="storageLocationsOther" /><span>אחר</span>
+                </label>
+              </div>
+              <div class="other-field-container" id="storageLocationsOther-container">
+                <label class="field-label" for="storageLocationsOther">נא לפרט מיקום אחסון נוסף</label>
+                <input type="text" id="storageLocationsOther" name="storageLocationsOther" class="field-input" placeholder="תארו היכן נשמר המידע" />
+              </div>
+            </div>
+
+            <div class="field-group full-width">
+              <label class="field-label">האם קשה למצוא מידע או מסמכים בתהליך?</label>
+              <div class="radio-group">
+                <label class="radio-item"><input type="radio" name="hardToFind" value="כן" /><span>כן</span></label>
+                <label class="radio-item"><input type="radio" name="hardToFind" value="לא" /><span>לא</span></label>
+                <label class="radio-item"><input type="radio" name="hardToFind" value="לפעמים" /><span>לפעמים</span></label>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ===== SECTION 5: בעיות ואתגרים ===== -->
+        <section class="form-section" data-section="5" id="section5">
+          <div class="section-header">
+            <span class="section-number">05</span>
+            <div>
+              <h2 class="section-title">בעיות ואתגרים</h2>
+              <p class="section-desc">מהם האתגרים והקשיים בתהליך הנוכחי.</p>
+            </div>
+          </div>
+          <div class="fields-grid">
+
+            <div class="field-group full-width required">
+              <label for="mainPainPoint" class="field-label">מה החלק הכי ידני, מורכב או מסורבל בתהליך?</label>
+              <textarea id="mainPainPoint" name="mainPainPoint" class="field-textarea" placeholder="תארו את הפעולה שהכי פחות מוסיפה ערך ולוקחת זמן" rows="3" required></textarea>
+              <span class="field-error" id="mainPainPoint-error">שדה זה הוא חובה</span>
+            </div>
+
+            <div class="field-group full-width">
+              <label for="timeTaking" class="field-label">מה השלב שלוקח הכי הרבה זמן?</label>
+              <textarea id="timeTaking" name="timeTaking" class="field-textarea" placeholder="השלב שמאט הכי הרבה את התהליך" rows="2"></textarea>
+            </div>
+
+            <div class="field-group full-width">
+              <label for="errorProne" class="field-label">באיזה שלב מתרחשות שגיאות בדרך כלל?</label>
+              <textarea id="errorProne" name="errorProne" class="field-textarea" placeholder="נקודות כשל נפוצות" rows="2"></textarea>
+            </div>
+
+            <div class="field-group full-width">
+              <label class="field-label">האם קשה לעקוב אחרי סטטוס הטיפול?</label>
+              <div class="radio-group">
+                <label class="radio-item"><input type="radio" name="hardToTrack" value="כן" /><span>כן</span></label>
+                <label class="radio-item"><input type="radio" name="hardToTrack" value="לא" /><span>לא</span></label>
+                <label class="radio-item"><input type="radio" name="hardToTrack" value="לפעמים" /><span>לפעמים</span></label>
+              </div>
+            </div>
+
+            <div class="field-group full-width">
+              <label class="field-label">האם יש כפילויות או הזנה חוזרת של אותו מידע?</label>
+              <div class="radio-group">
+                <label class="radio-item"><input type="radio" name="duplicateEntry" value="כן" /><span>כן</span></label>
+                <label class="radio-item"><input type="radio" name="duplicateEntry" value="לא" /><span>לא</span></label>
+                <label class="radio-item"><input type="radio" name="duplicateEntry" value="לפעמים" /><span>לפעמים</span></label>
+              </div>
+            </div>
+
+            <div class="field-group">
+              <label for="frequency" class="field-label">כמה פעמים התהליך מתרחש?</label>
+              <select id="frequency" name="frequency" class="field-select"
+                      data-other-target="frequencyOther">
+                <option value="">-- בחרו --</option>
+                <option value="כל יום">כל יום</option>
+                <option value="כמה פעמים בשבוע">כמה פעמים בשבוע</option>
+                <option value="כמה פעמים בחודש">כמה פעמים בחודש</option>
+                <option value="לפי צורך">לפי צורך</option>
+                <option value="אחר">אחר</option>
+              </select>
+              <div class="other-field-container" id="frequencyOther-container">
+                <label class="field-label" for="frequencyOther">נא לפרט את תדירות התהליך</label>
+                <input type="text" id="frequencyOther" name="frequencyOther" class="field-input" placeholder="תארו את התדירות" />
+              </div>
+            </div>
+
+            <div class="field-group">
+              <label for="avgTime" class="field-label">כמה זמן בממוצע לוקח ביצוע התהליך?</label>
+              <input type="text" id="avgTime" name="avgTime" class="field-input" placeholder="למשל: 30 דקות, שעתיים" />
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ===== SECTION 6: מה להפוך לדיגיטלי ===== -->
+        <section class="form-section" data-section="6" id="section6">
+          <div class="section-header">
+            <span class="section-number">06</span>
+            <div>
+              <h2 class="section-title">מה כדאי להפוך לדיגיטלי או אוטומטי</h2>
+              <p class="section-desc">סמנו את החלקים שאתם רוצים לשפר.</p>
+            </div>
+          </div>
+          <div class="fields-grid">
+
+            <div class="field-group full-width">
+              <label class="field-label">אילו חלקים הייתם רוצים להפוך לאוטומטיים?</label>
+              <div class="checkbox-grid">
+                <label class="checkbox-item"><input type="checkbox" name="automationNeeds" value="פתיחת בקשה" /><span>פתיחת בקשה</span></label>
+                <label class="checkbox-item"><input type="checkbox" name="automationNeeds" value="שליחת מייל" /><span>שליחת מייל</span></label>
+                <label class="checkbox-item"><input type="checkbox" name="automationNeeds" value="שמירת מסמכים" /><span>שמירת מסמכים</span></label>
+                <label class="checkbox-item"><input type="checkbox" name="automationNeeds" value="עדכון מערכת" /><span>עדכון מערכת</span></label>
+                <label class="checkbox-item"><input type="checkbox" name="automationNeeds" value="העתקת מידע בין מערכות" /><span>העתקת מידע בין מערכות</span></label>
+                <label class="checkbox-item"><input type="checkbox" name="automationNeeds" value="בדיקת נתונים" /><span>בדיקת נתונים</span></label>
+                <label class="checkbox-item"><input type="checkbox" name="automationNeeds" value="הפקת דוח" /><span>הפקת דוח</span></label>
+                <label class="checkbox-item"><input type="checkbox" name="automationNeeds" value="שליחת תזכורות" /><span>שליחת תזכורות</span></label>
+                <label class="checkbox-item"><input type="checkbox" name="automationNeeds" value="מעקב סטטוס" /><span>מעקב סטטוס</span></label>
+                <label class="checkbox-item"><input type="checkbox" name="automationNeeds" value="אישורים דיגיטליים" /><span>אישורים דיגיטליים</span></label>
+                <label class="checkbox-item">
+                  <input type="checkbox" name="automationNeeds" value="אחר"
+                         data-other-target="automationNeedsOther" /><span>אחר</span>
+                </label>
+              </div>
+              <div class="other-field-container" id="automationNeedsOther-container">
+                <label class="field-label" for="automationNeedsOther">נא לפרט את הצורך האוטומטי הנוסף</label>
+                <input type="text" id="automationNeedsOther" name="automationNeedsOther" class="field-input" placeholder="תארו את החלק שתרצו להפוך לאוטומטי" />
+              </div>
+            </div>
+
+            <div class="field-group">
+              <label class="field-label">האם נדרש טופס דיגיטלי?</label>
+              <div class="radio-group">
+                <label class="radio-item"><input type="radio" name="needsForm" value="כן" /><span>כן</span></label>
+                <label class="radio-item"><input type="radio" name="needsForm" value="לא" /><span>לא</span></label>
+                <label class="radio-item"><input type="radio" name="needsForm" value="אולי" /><span>אולי</span></label>
+              </div>
+            </div>
+
+            <div class="field-group">
+              <label class="field-label">האם נדרש מסך מעקב / דשבורד?</label>
+              <div class="radio-group">
+                <label class="radio-item"><input type="radio" name="needsDashboard" value="כן" /><span>כן</span></label>
+                <label class="radio-item"><input type="radio" name="needsDashboard" value="לא" /><span>לא</span></label>
+                <label class="radio-item"><input type="radio" name="needsDashboard" value="אולי" /><span>אולי</span></label>
+              </div>
+            </div>
+
+            <div class="field-group">
+              <label class="field-label">האם נדרשות התראות אוטומטיות?</label>
+              <div class="radio-group">
+                <label class="radio-item"><input type="radio" name="needsAlerts" value="כן" /><span>כן</span></label>
+                <label class="radio-item"><input type="radio" name="needsAlerts" value="לא" /><span>לא</span></label>
+                <label class="radio-item"><input type="radio" name="needsAlerts" value="אולי" /><span>אולי</span></label>
+              </div>
+            </div>
+
+            <div class="field-group full-width">
+              <label for="reportNeeded" class="field-label">האם יש צורך להפיק דוח או מסמך בסיום התהליך?</label>
+              <textarea id="reportNeeded" name="reportNeeded" class="field-textarea" placeholder="אם כן, תארו מה הדוח צריך להכיל" rows="2"></textarea>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ===== SECTION 7: אישורים, הרשאות ורגישות מידע ===== -->
+        <section class="form-section" data-section="7" id="section7">
+          <div class="section-header">
+            <span class="section-number">07</span>
+            <div>
+              <h2 class="section-title">אישורים, הרשאות ורגישות מידע</h2>
+              <p class="section-desc">מי מאשר ומה הרגישות של המידע שעובר בתהליך.</p>
+            </div>
+          </div>
+          <div class="fields-grid">
+
+            <div class="field-group full-width">
+              <label class="field-label">האם יש אישורים בתהליך?</label>
+              <div class="radio-group">
+                <label class="radio-item"><input type="radio" name="hasApprovals" value="כן" /><span>כן</span></label>
+                <label class="radio-item"><input type="radio" name="hasApprovals" value="לא" /><span>לא</span></label>
+              </div>
+            </div>
+
+            <div class="field-group full-width conditional-field" id="approvalDetails-group">
+              <label for="approvalDetails" class="field-label">אם כן, מי מאשר ובאיזה סדר?</label>
+              <textarea id="approvalDetails" name="approvalDetails" class="field-textarea" placeholder="למשל: מנהל ישיר, לאחר מכן כספים" rows="2"></textarea>
+            </div>
+
+            <div class="field-group full-width">
+              <label class="field-label">האם יש הרשאות שונות למשתמשים שונים?</label>
+              <div class="radio-group">
+                <label class="radio-item"><input type="radio" name="differentPermissions" value="כן" /><span>כן</span></label>
+                <label class="radio-item"><input type="radio" name="differentPermissions" value="לא" /><span>לא</span></label>
+                <label class="radio-item"><input type="radio" name="differentPermissions" value="לא בטוח" /><span>לא בטוח</span></label>
+              </div>
+            </div>
+
+            <div class="field-group full-width">
+              <label class="field-label">האם יש מידע רגיש או חסוי בתהליך?</label>
+              <div class="radio-group">
+                <label class="radio-item"><input type="radio" name="sensitiveInfo" value="כן" /><span>כן</span></label>
+                <label class="radio-item"><input type="radio" name="sensitiveInfo" value="לא" /><span>לא</span></label>
+                <label class="radio-item"><input type="radio" name="sensitiveInfo" value="לא בטוח" /><span>לא בטוח</span></label>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ===== SECTION 8: דירוג מהיר ===== -->
+        <section class="form-section" data-section="8" id="section8">
+          <div class="section-header">
+            <span class="section-number">08</span>
+            <div>
+              <h2 class="section-title">דירוג מהיר</h2>
+              <p class="section-desc">דרגו את התהליך בסולם 1 עד 5 (1 = נמוך, 5 = גבוה מאוד).</p>
+            </div>
+          </div>
+          <div class="fields-grid">
+            <div class="field-group full-width">
+
+              <div class="rating-item">
+                <label class="field-label">כמה התהליך ידני?</label>
+                <div class="rating-scale">
+                  <span class="rating-anchor">מעט</span>
+                  <div class="rating-buttons">
+                    <label class="rating-btn"><input type="radio" name="ratingManual" value="1" /><span>1</span></label>
+                    <label class="rating-btn"><input type="radio" name="ratingManual" value="2" /><span>2</span></label>
+                    <label class="rating-btn"><input type="radio" name="ratingManual" value="3" /><span>3</span></label>
+                    <label class="rating-btn"><input type="radio" name="ratingManual" value="4" /><span>4</span></label>
+                    <label class="rating-btn"><input type="radio" name="ratingManual" value="5" /><span>5</span></label>
+                  </div>
+                  <span class="rating-anchor">מאוד</span>
+                </div>
+              </div>
+
+              <div class="rating-item">
+                <label class="field-label">כמה התהליך גוזל זמן?</label>
+                <div class="rating-scale">
+                  <span class="rating-anchor">מעט</span>
+                  <div class="rating-buttons">
+                    <label class="rating-btn"><input type="radio" name="ratingTime" value="1" /><span>1</span></label>
+                    <label class="rating-btn"><input type="radio" name="ratingTime" value="2" /><span>2</span></label>
+                    <label class="rating-btn"><input type="radio" name="ratingTime" value="3" /><span>3</span></label>
+                    <label class="rating-btn"><input type="radio" name="ratingTime" value="4" /><span>4</span></label>
+                    <label class="rating-btn"><input type="radio" name="ratingTime" value="5" /><span>5</span></label>
+                  </div>
+                  <span class="rating-anchor">מאוד</span>
+                </div>
+              </div>
+
+              <div class="rating-item">
+                <label class="field-label">כמה שגיאות מתרחשות בתהליך?</label>
+                <div class="rating-scale">
+                  <span class="rating-anchor">מעט</span>
+                  <div class="rating-buttons">
+                    <label class="rating-btn"><input type="radio" name="ratingErrors" value="1" /><span>1</span></label>
+                    <label class="rating-btn"><input type="radio" name="ratingErrors" value="2" /><span>2</span></label>
+                    <label class="rating-btn"><input type="radio" name="ratingErrors" value="3" /><span>3</span></label>
+                    <label class="rating-btn"><input type="radio" name="ratingErrors" value="4" /><span>4</span></label>
+                    <label class="rating-btn"><input type="radio" name="ratingErrors" value="5" /><span>5</span></label>
+                  </div>
+                  <span class="rating-anchor">הרבה</span>
+                </div>
+              </div>
+
+              <div class="rating-item">
+                <label class="field-label">כמה דחוף לשפר את התהליך?</label>
+                <div class="rating-scale">
+                  <span class="rating-anchor">פחות דחוף</span>
+                  <div class="rating-buttons">
+                    <label class="rating-btn"><input type="radio" name="ratingUrgency" value="1" /><span>1</span></label>
+                    <label class="rating-btn"><input type="radio" name="ratingUrgency" value="2" /><span>2</span></label>
+                    <label class="rating-btn"><input type="radio" name="ratingUrgency" value="3" /><span>3</span></label>
+                    <label class="rating-btn"><input type="radio" name="ratingUrgency" value="4" /><span>4</span></label>
+                    <label class="rating-btn"><input type="radio" name="ratingUrgency" value="5" /><span>5</span></label>
+                  </div>
+                  <span class="rating-anchor">דחוף מאוד</span>
+                </div>
+              </div>
+
+              <div class="rating-item">
+                <label class="field-label">כמה אנשים מושפעים מהתהליך?</label>
+                <div class="rating-scale">
+                  <span class="rating-anchor">מעטים</span>
+                  <div class="rating-buttons">
+                    <label class="rating-btn"><input type="radio" name="ratingPeople" value="1" /><span>1</span></label>
+                    <label class="rating-btn"><input type="radio" name="ratingPeople" value="2" /><span>2</span></label>
+                    <label class="rating-btn"><input type="radio" name="ratingPeople" value="3" /><span>3</span></label>
+                    <label class="rating-btn"><input type="radio" name="ratingPeople" value="4" /><span>4</span></label>
+                    <label class="rating-btn"><input type="radio" name="ratingPeople" value="5" /><span>5</span></label>
+                  </div>
+                  <span class="rating-anchor">הרבה</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 9: סיכום ===== -->
+        <section class="form-section" data-section="9" id="section9">
+          <div class="section-header">
+            <span class="section-number">09</span>
+            <div>
+              <h2 class="section-title">סיכום</h2>
+              <p class="section-desc">מספר שאלות אחרונות לסיכום.</p>
+            </div>
+          </div>
+          <div class="fields-grid">
+
+            <div class="field-group full-width required">
+              <label for="mainProblem" class="field-label">במשפט אחד: מה הבעיה המרכזית כיום?</label>
+              <textarea id="mainProblem" name="mainProblem" class="field-textarea" placeholder="תמצתו את הבעיה המרכזית" rows="2" required></textarea>
+              <span class="field-error" id="mainProblem-error">שדה זה הוא חובה</span>
+            </div>
+
+            <div class="field-group full-width">
+              <label for="desiredFuture" class="field-label">מה המצב הרצוי בעתיד?</label>
+              <textarea id="desiredFuture" name="desiredFuture" class="field-textarea" placeholder="תארו את המצב האידיאלי" rows="2"></textarea>
+            </div>
+
+            <div class="field-group full-width">
+              <label for="successDefinition" class="field-label">מה ייחשב הצלחה מבחינתכם?</label>
+              <textarea id="successDefinition" name="successDefinition" class="field-textarea" placeholder="למשל: חיסכון של שעה ביום, אפס שגיאות הזנה" rows="2"></textarea>
+            </div>
+
+            <div class="field-group full-width">
+              <label for="additionalNotes" class="field-label">הערות נוספות</label>
+              <textarea id="additionalNotes" name="additionalNotes" class="field-textarea" placeholder="כל מידע נוסף שחשוב לדעת" rows="3"></textarea>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- Navigation Buttons -->
+        <div class="form-nav-buttons">
+          <button type="button" class="btn btn-secondary" id="btnPrev" style="display:none">הקודם</button>
+          <button type="button" class="btn btn-primary" id="btnNext">הבא</button>
+          <button type="submit" class="btn btn-submit" id="btnSubmit" style="display:none">
+            <span class="btn-text">שליחת הסקר</span>
+            <span class="btn-loading" style="display:none">
+              <span class="spinner"></span> שולח...
+            </span>
+          </button>
+        </div>
+
+      </form>
+
+      <!-- Success Screen -->
+      <div class="success-screen" id="successScreen" style="display:none">
+        <div class="success-icon">
+          <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="26" cy="26" r="25" stroke="currentColor" stroke-width="2"/>
+            <path d="M14 26L22 34L38 18" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h2 class="success-title">תודה רבה!</h2>
+        <p class="success-message">הסקר נשלח בהצלחה.<br />הנתונים נשמרו ויסייעו לנו לזהות הזדמנויות לייעול ואוטומציה.<br />נחזור אליכם בהמשך.</p>
+        <button type="button" class="btn btn-secondary" id="btnNewSurvey">מלא סקר נוסף</button>
+      </div>
+
+      <!-- Error Banner -->
+      <div class="error-banner" id="errorBanner" style="display:none">
+        <strong>שגיאה בשליחה.</strong> אנא נסו שוב. אם הבעיה חוזרת, צרו קשר עם מנהל המערכת.
+        <button type="button" class="error-close" id="errorClose" aria-label="סגור">×</button>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>סקר זה מיועד לשימוש פנימי בלבד. הנתונים נשמרים ב-Google Sheets ולא מועברים לגורמים חיצוניים.</p>
+      <p class="footer-brand">nakama-software</p>
+    </div>
+  </footer>
+
+</div>
+<script src="script.js"></script>
 </body>
 </html>

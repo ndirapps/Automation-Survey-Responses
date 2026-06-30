@@ -1,10 +1,9 @@
 /* =============================================================
-   script.js – Hebrew Automation Survey
+   script.js – Hebrew Automation Survey | nakama-software
    =============================================================
-   CONFIGURATION — paste your deployed Web App URL here:
+   CONFIGURATION — Google Apps Script Web App URL:
    ============================================================= */
-const GOOGLE_SCRIPT_URL = "https://script.google.com/a/macros/nakama-software.com/s/AKfycbzHmeczkJ2P2LbF2ACvX3n5KAz6YaVViyP2uWAZDU_d8-ELB4-bTajtMbAEKu_DeXRH/exec";// Example:
-// const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby.../exec';
+const GOOGLE_SCRIPT_URL = "https://script.google.com/a/macros/nakama-software.com/s/AKfycbzHmeczkJ2P2LbF2ACvX3n5KAz6YaVViyP2uWAZDU_d8-ELB4-bTajtMbAEKu_DeXRH/exec";
 
 /* ============================================================= */
 
@@ -94,12 +93,10 @@ function validateSection(sectionNum) {
 
 /* Clear validation state on input */
 form.addEventListener('input', e => {
-  if (e.target.matches('[required]')) {
-    if (e.target.value.trim()) {
-      e.target.classList.remove('invalid');
-      const errorEl = document.getElementById(e.target.id + '-error');
-      if (errorEl) errorEl.classList.remove('visible');
-    }
+  if (e.target.matches('[required]') && e.target.value.trim()) {
+    e.target.classList.remove('invalid');
+    const errorEl = document.getElementById(e.target.id + '-error');
+    if (errorEl) errorEl.classList.remove('visible');
   }
 });
 
@@ -107,9 +104,7 @@ form.addEventListener('input', e => {
    Navigation events
    ============================================================ */
 btnNext.addEventListener('click', () => {
-  if (validateSection(currentSection)) {
-    showSection(currentSection + 1);
-  }
+  if (validateSection(currentSection)) showSection(currentSection + 1);
 });
 
 btnPrev.addEventListener('click', () => {
@@ -128,26 +123,49 @@ document.querySelectorAll('.nav-dot').forEach(dot => {
 });
 
 /* ============================================================
-   Conditional fields
+   Generic "Other" field handler
+   Applies to:
+     - Checkboxes: data-other-target="<fieldId>"
+     - Selects:    data-other-target="<fieldId>"  (triggers when value === "אחר")
    ============================================================ */
+function initOtherFields() {
+  /* Checkboxes with data-other-target */
+  document.querySelectorAll('input[type="checkbox"][data-other-target]').forEach(cb => {
+    cb.addEventListener('change', () => {
+      toggleOtherContainer(cb.dataset.otherTarget, cb.checked);
+    });
+  });
 
-// "מעתיקים מידע ידנית?" → show details textarea when כן
+  /* Selects with data-other-target */
+  document.querySelectorAll('select[data-other-target]').forEach(sel => {
+    sel.addEventListener('change', () => {
+      toggleOtherContainer(sel.dataset.otherTarget, sel.value === 'אחר');
+    });
+  });
+}
+
+function toggleOtherContainer(targetId, show) {
+  const container = document.getElementById(targetId + '-container');
+  const input = document.getElementById(targetId);
+  if (!container) return;
+  container.classList.toggle('visible', show);
+  if (!show && input) input.value = '';
+}
+
+/* ============================================================
+   Conditional fields (yes/no triggers — not "other" pattern)
+   ============================================================ */
 document.querySelectorAll('input[name="manualCopy"]').forEach(radio => {
   radio.addEventListener('change', () => {
     const group = document.getElementById('manualCopyDetails-group');
-    if (group) {
-      group.classList.toggle('visible', radio.value === 'כן' && radio.checked);
-    }
+    if (group) group.classList.toggle('visible', radio.value === 'כן' && radio.checked);
   });
 });
 
-// "האם יש אישורים?" → show details textarea when כן
 document.querySelectorAll('input[name="hasApprovals"]').forEach(radio => {
   radio.addEventListener('change', () => {
     const group = document.getElementById('approvalDetails-group');
-    if (group) {
-      group.classList.toggle('visible', radio.value === 'כן' && radio.checked);
-    }
+    if (group) group.classList.toggle('visible', radio.value === 'כן' && radio.checked);
   });
 });
 
@@ -164,73 +182,84 @@ function getRadioValue(name) {
   return el ? el.value : '';
 }
 
+function val(id) {
+  const el = document.getElementById(id);
+  return el ? el.value.trim() : '';
+}
+
 function collectFormData() {
   return {
     // Section 1
-    department: document.getElementById('department').value.trim(),
-    team: document.getElementById('team').value.trim(),
-    respondentName: document.getElementById('respondentName').value.trim(),
-    role: document.getElementById('role').value.trim(),
-    contactPerson: document.getElementById('contactPerson').value.trim(),
+    department:           val('department'),
+    team:                 val('team'),
+    respondentName:       val('respondentName'),
+    role:                 val('role'),
+    contactPerson:        val('contactPerson'),
 
     // Section 2
-    processName: document.getElementById('processName').value.trim(),
-    processGoal: document.getElementById('processGoal').value.trim(),
-    currentOwner: document.getElementById('currentOwner').value.trim(),
-    otherInvolved: document.getElementById('otherInvolved').value.trim(),
+    processName:          val('processName'),
+    processGoal:          val('processGoal'),
+    currentOwner:         val('currentOwner'),
+    otherInvolved:        val('otherInvolved'),
 
     // Section 3
-    processStart: document.getElementById('processStart').value,
-    currentSteps: document.getElementById('currentSteps').value.trim(),
-    systemsUsed: getCheckedValues('systemsUsed').join(', '),
-    manualCopy: getRadioValue('manualCopy'),
-    manualCopyDetails: document.getElementById('manualCopyDetails').value.trim(),
+    processStart:         val('processStart') === 'processStart' ? '' : document.getElementById('processStart').value,
+    processStartOther:    val('processStartOther'),
+    currentSteps:         val('currentSteps'),
+    systemsUsed:          getCheckedValues('systemsUsed').filter(v => v !== 'אחר').join(', '),
+    systemsUsedOther:     val('systemsUsedOther'),
+    manualCopy:           getRadioValue('manualCopy'),
+    manualCopyDetails:    val('manualCopyDetails'),
 
     // Section 4
-    hasFiles: getRadioValue('hasFiles'),
-    fileTypes: getCheckedValues('fileTypes').join(', '),
-    storageLocations: getCheckedValues('storageLocations').join(', '),
-    hardToFind: getRadioValue('hardToFind'),
+    hasFiles:             getRadioValue('hasFiles'),
+    fileTypes:            getCheckedValues('fileTypes').filter(v => v !== 'אחר').join(', '),
+    fileTypesOther:       val('fileTypesOther'),
+    storageLocations:     getCheckedValues('storageLocations').filter(v => v !== 'אחר').join(', '),
+    storageLocationsOther:val('storageLocationsOther'),
+    hardToFind:           getRadioValue('hardToFind'),
 
     // Section 5
-    mainPainPoint: document.getElementById('mainPainPoint').value.trim(),
-    timeTaking: document.getElementById('timeTaking').value.trim(),
-    errorProne: document.getElementById('errorProne').value.trim(),
-    hardToTrack: getRadioValue('hardToTrack'),
-    duplicateEntry: getRadioValue('duplicateEntry'),
-    frequency: document.getElementById('frequency').value,
-    avgTime: document.getElementById('avgTime').value.trim(),
+    mainPainPoint:        val('mainPainPoint'),
+    timeTaking:           val('timeTaking'),
+    errorProne:           val('errorProne'),
+    hardToTrack:          getRadioValue('hardToTrack'),
+    duplicateEntry:       getRadioValue('duplicateEntry'),
+    frequency:            document.getElementById('frequency').value,
+    frequencyOther:       val('frequencyOther'),
+    avgTime:              val('avgTime'),
 
     // Section 6
-    automationNeeds: getCheckedValues('automationNeeds').join(', '),
-    needsForm: getRadioValue('needsForm'),
-    needsDashboard: getRadioValue('needsDashboard'),
-    needsAlerts: getRadioValue('needsAlerts'),
-    reportNeeded: document.getElementById('reportNeeded').value.trim(),
+    automationNeeds:      getCheckedValues('automationNeeds').filter(v => v !== 'אחר').join(', '),
+    automationNeedsOther: val('automationNeedsOther'),
+    needsForm:            getRadioValue('needsForm'),
+    needsDashboard:       getRadioValue('needsDashboard'),
+    needsAlerts:          getRadioValue('needsAlerts'),
+    reportNeeded:         val('reportNeeded'),
 
     // Section 7
-    hasApprovals: getRadioValue('hasApprovals'),
-    approvalDetails: document.getElementById('approvalDetails').value.trim(),
+    hasApprovals:         getRadioValue('hasApprovals'),
+    approvalDetails:      val('approvalDetails'),
     differentPermissions: getRadioValue('differentPermissions'),
-    sensitiveInfo: getRadioValue('sensitiveInfo'),
+    sensitiveInfo:        getRadioValue('sensitiveInfo'),
 
-    // Section 8 – ratings
-    ratingManual: getRadioValue('ratingManual'),
-    ratingTime: getRadioValue('ratingTime'),
-    ratingErrors: getRadioValue('ratingErrors'),
-    ratingUrgency: getRadioValue('ratingUrgency'),
-    ratingPeople: getRadioValue('ratingPeople'),
+    // Section 8
+    ratingManual:         getRadioValue('ratingManual'),
+    ratingTime:           getRadioValue('ratingTime'),
+    ratingErrors:         getRadioValue('ratingErrors'),
+    ratingUrgency:        getRadioValue('ratingUrgency'),
+    ratingPeople:         getRadioValue('ratingPeople'),
 
     // Section 9
-    mainProblem: document.getElementById('mainProblem').value.trim(),
-    desiredFuture: document.getElementById('desiredFuture').value.trim(),
-    successDefinition: document.getElementById('successDefinition').value.trim(),
-    additionalNotes: document.getElementById('additionalNotes').value.trim(),
+    mainProblem:          val('mainProblem'),
+    desiredFuture:        val('desiredFuture'),
+    successDefinition:    val('successDefinition'),
+    additionalNotes:      val('additionalNotes'),
 
     // Metadata
-    createdAt: new Date().toISOString(),
-    userAgent: navigator.userAgent,
-    pageUrl: window.location.href
+    createdAt:  new Date().toISOString(),
+    userAgent:  navigator.userAgent,
+    pageUrl:    window.location.href
   };
 }
 
@@ -245,31 +274,18 @@ function setSubmitLoading(loading) {
   btnSpinner.style.display = loading ? 'inline-flex' : 'none';
 }
 
-function showError() {
-  errorBanner.style.display = 'flex';
-}
-
-function hideError() {
-  errorBanner.style.display = 'none';
-}
+function showError() { errorBanner.style.display = 'flex'; }
+function hideError() { errorBanner.style.display = 'none'; }
 
 errorClose.addEventListener('click', hideError);
 
 async function submitSurvey(data) {
   /*
-    Google Apps Script Web Apps have CORS restrictions when deployed as "Anyone".
-    We use fetch with mode: "no-cors" (opaque response) to avoid the preflight block.
-    With no-cors, we cannot read the response body, so we optimistically assume
-    success after the request completes without a network error.
-
-    If the script URL is not configured, we fall through to an error.
+    Google Apps Script Web Apps have CORS restrictions.
+    Using fetch with mode: "no-cors" (opaque response) avoids the preflight block.
+    We cannot read the response body, so we optimistically treat a network-error-free
+    request as success.
   */
-
-  if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL === 'YOUR_GOOGLE_SCRIPT_URL_HERE') {
-    console.error('GOOGLE_SCRIPT_URL is not configured in script.js');
-    throw new Error('כתובת ה-Google Script לא הוגדרה. פנו למנהל המערכת.');
-  }
-
   const params = new URLSearchParams();
   params.append('payload', JSON.stringify(data));
 
@@ -279,14 +295,11 @@ async function submitSurvey(data) {
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body: params.toString()
   });
-  // With no-cors we receive an opaque response; the request reached the server.
 }
 
 form.addEventListener('submit', async e => {
   e.preventDefault();
-
   if (isSubmitting) return;
-
   if (!validateSection(TOTAL_SECTIONS)) return;
 
   isSubmitting = true;
@@ -297,7 +310,6 @@ form.addEventListener('submit', async e => {
     const data = collectFormData();
     await submitSurvey(data);
 
-    // Show success
     form.style.display = 'none';
     document.querySelector('.form-nav-buttons').style.display = 'none';
     successScreen.style.display = 'block';
@@ -316,9 +328,18 @@ form.addEventListener('submit', async e => {
    ============================================================ */
 btnNewSurvey.addEventListener('click', () => {
   form.reset();
-  // Hide conditional fields
+
+  // Hide all conditional fields
   document.querySelectorAll('.conditional-field').forEach(el => el.classList.remove('visible'));
-  // Clear invalid states
+
+  // Hide and clear all "other" containers
+  document.querySelectorAll('.other-field-container').forEach(el => {
+    el.classList.remove('visible');
+    const input = el.querySelector('input, textarea');
+    if (input) input.value = '';
+  });
+
+  // Clear validation states
   document.querySelectorAll('.invalid').forEach(el => el.classList.remove('invalid'));
   document.querySelectorAll('.field-error.visible').forEach(el => el.classList.remove('visible'));
 
@@ -334,4 +355,5 @@ btnNewSurvey.addEventListener('click', () => {
 /* ============================================================
    Init
    ============================================================ */
+initOtherFields();
 showSection(1);
