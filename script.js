@@ -184,7 +184,14 @@ function getRadioValue(name) {
 
 function val(id) {
   const el = document.getElementById(id);
-  return el ? el.value.trim() : '';
+  if (!el) return '';
+  // Guard: only read .value from actual form controls, never from label/div/span
+  const tag = el.tagName;
+  if (tag !== 'INPUT' && tag !== 'TEXTAREA' && tag !== 'SELECT') {
+    console.error('[survey] val() called on non-input element:', id, tag);
+    return '';
+  }
+  return el.value.trim();
 }
 
 function collectFormData() {
@@ -203,7 +210,7 @@ function collectFormData() {
     otherInvolved:        val('otherInvolved'),
 
     // Section 3
-    processStart:         val('processStart') === 'processStart' ? '' : document.getElementById('processStart').value,
+    processStart:         val('processStart'),
     processStartOther:    val('processStartOther'),
     currentSteps:         val('currentSteps'),
     systemsUsed:          getCheckedValues('systemsUsed').filter(v => v !== 'אחר').join(', '),
@@ -308,6 +315,7 @@ form.addEventListener('submit', async e => {
 
   try {
     const data = collectFormData();
+    console.table(data);
     await submitSurvey(data);
 
     form.style.display = 'none';

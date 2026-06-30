@@ -107,9 +107,11 @@ function parsePayload(e) {
     try { return JSON.parse(raw); } catch (_) {}
     var params = {};
     raw.split('&').forEach(function(pair) {
-      var parts = pair.split('=');
-      if (parts.length === 2) {
-        params[decodeURIComponent(parts[0])] = decodeURIComponent(parts[1].replace(/\+/g, ' '));
+      var idx = pair.indexOf('=');
+      if (idx !== -1) {
+        var key = pair.substring(0, idx);
+        var value = pair.substring(idx + 1);
+        params[decodeURIComponent(key)] = decodeURIComponent(value.replace(/\+/g, ' '));
       }
     });
     if (params.payload) return JSON.parse(params.payload);
